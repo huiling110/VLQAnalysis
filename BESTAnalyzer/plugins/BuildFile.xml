@@ -1,0 +1,19 @@
+<library file="*.cc" name="BESTAnalyzerlib">
+<use name="FWCore/Framework"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="FWCore/ServiceRegistry"/>
+<use name="DataFormats/TrackReco"/>
+<use name="DataFormats/PatCandidates"/>
+<use name="PhysicsTools/UtilAlgos"/>
+<use name="PhysicsTools/CandUtils"/>
+<use name="PhysicsTools/TensorFlow"/>
+<use name="SimDataFormats/GeneratorProducts"/>
+<use name="VLQAnalysis/BESTAnalyzer"/>
+<use name="ROOT"/>
+<use name="clhep"/>
+<use name="fastjet"/>
+
+<flags CXXFLAGS="-O0 -g3 -fno-inline"/>
+<flags EDM_PLUGIN="1"/>
+</library>
