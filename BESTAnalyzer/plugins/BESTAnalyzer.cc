@@ -170,8 +170,8 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   //now do what ever initialization is needed
   edm::Service<TFileService> fs;
   jetTree = fs->make<TTree>("jetTree","jetTree");
-  GenWeightTotal = fs->make<TH1F>("GenWeightTotal", "GenWeightTotal", 1, 0, 1);
-  Cutflow = fs->make<TH1F>("Cutflow", "Cutflow", 5, 0, 4);
+  GenWeightTotal = fs->make<TH1F>("GenWeightTotal", "GenWeightTotal", 1, 0.5, 1.5);
+  Cutflow = fs->make<TH1F>("Cutflow", "Cutflow", 7, 0, 6);
 
   //Store the BEST variables for each jet
   listOfVars.push_back("nJets");
@@ -434,7 +434,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     //Cutting on GeV > 400 for analysis, remember that the network is only trained on > 500!
     if (ak8Jets[0].pt() > 400 && ak8Jets[1].pt() > 400 && ak8Jets[2].pt() > 400 && ak8Jets[3].pt() > 400){
       Cutflow->Fill(2);
-      if (ak8Jets[0].subjets("SoftDropPuppi").size() >= 2 && ak8Jets[1].subjets("SoftDropPuppi").size() >= 2 && ak8Jets[2].subjets("SoftDropPuppi").size() >= 2 && ak8Jets[3].subjets("SoftDropPuppi").size() >= 2){
+      if (checkJetLength(ak8Jets[0]) && checkJetLength(ak8Jets[1]) && checkJetLength(ak8Jets[2]) && checkJetLength(ak8Jets[3]) ){
 	Cutflow->Fill(3);
 
 	treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
@@ -454,11 +454,17 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	  std::vector<reco::Candidate * > daughtersOfJet;
 	  getJetDaughters(daughtersOfJet, ijet); //unzips the subjets and other daughters into one vector
+	  if (daughtersOfJet.size() < 3) goto DontFill;
+	  Cutflow->Fill(4, 0.25); // 1/4 weight per jet
 	  storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Higgs", 125.);
+
+	  if (BESTmap["nSubjets_Higgs"] < 3) goto DontFill; //Should be a cleaner way to check this before the first RestFrameVariables call
+	  
           storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Top", 172.5);
           storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "W", 80.4);
           storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Z", 91.2);
 
+	  Cutflow->Fill(5, 0.25);
 
 	  std::vector<float> BESTVars = orderBESTVars(BESTmap, listOfBESTVars_);
 
@@ -488,6 +494,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //-------------------------------------------------------------------------------
   // Clear and Reset all tree variables -------------------------------------------
   //-------------------------------------------------------------------------------
+  DontFill:
   for (unsigned i = 0; i < listOfVars.size(); i++){
     treeVars[ listOfVars[i] ] = -999.99;
   }

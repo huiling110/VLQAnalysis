@@ -96,15 +96,18 @@ int FWMoments(std::vector<TLorentzVector> particles, double (&outputs)[5] ){
 void getJetDaughters(std::vector<reco::Candidate * > &daughtersOfJet, const pat::Jet &jet){
     // First get all daughters for the first Soft Drop Subjet
     for (unsigned int i = 0; i < jet.daughter(0)->numberOfDaughters(); i++){
-        daughtersOfJet.push_back( (reco::Candidate *) jet.daughter(0)->daughter(i) );
+      if (jet.daughter(0)->daughter(i)->pt() < 0.5) continue;
+      daughtersOfJet.push_back( (reco::Candidate *) jet.daughter(0)->daughter(i) );
     }
     // Get all daughters for the second Soft Drop Subjet
     for (unsigned int i = 0; i < jet.daughter(1)->numberOfDaughters(); i++){
-        daughtersOfJet.push_back( (reco::Candidate *) jet.daughter(1)->daughter(i));
+      if (jet.daughter(1)->daughter(i)->pt() < 0.5) continue;
+      daughtersOfJet.push_back( (reco::Candidate *) jet.daughter(1)->daughter(i));
     }
     // Get all daughters not included in Soft Drop
     for (unsigned int i = 2; i< jet.numberOfDaughters(); i++){
-        daughtersOfJet.push_back( (reco::Candidate *) jet.daughter(i) );
+      if (jet.daughter(i)->pt() < 0.5) continue;
+      daughtersOfJet.push_back( (reco::Candidate *) jet.daughter(i) );
     }
 }
 
@@ -451,4 +454,12 @@ void prepareBoostedImage(const pat::Jet &jet, std::vector<reco::Candidate *> dau
     Image[x_bin][y_bin] += lv->E()/leadE ;    
   }
   delete BoostedDaughters;
+}
+
+bool checkJetPt(const pat::Jet &jet){
+  return (jet.pt() > 400);
+}
+
+bool checkJetLength(const pat::Jet &jet){
+  return ( (jet.subjets("SoftDropPuppi").size() >=2) && (jet.numberOfDaughters() > 2) );
 }

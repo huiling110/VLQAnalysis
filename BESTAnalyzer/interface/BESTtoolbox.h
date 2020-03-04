@@ -58,4 +58,7 @@ std::vector<float> orderBESTVars(std::map<std::string, float> BESMap, std::vecto
 
 void prepareBoostedImage(const pat::Jet &jet, std::vector<reco::Candidate *> daughtersOfJet, float Image[31][31], const float mass);
 
+bool checkJetPt(const pat::Jet &jet);
+
+bool checkJetLength(const pat::Jet &jet);
 #endif

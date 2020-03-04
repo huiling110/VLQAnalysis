@@ -93,7 +93,7 @@ void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
   isConfigured_ = true;
 }
 
-std::vector<float> BESTEvaluation::getPrediction(const float HImage[31][31], const float TImage[31][31], const float WImage[31][31], const float ZImage[31][31], const std::vector<float> BESTInputs){
+std::vector<float> BESTEvaluation::getPrediction(const float HImage[31][31], const float TImage[31][31], const float WImage[31][31], const float ZImage[31][31], const std::vector<float> &BESTInputs){
   std::vector<tensorflow::Tensor> pred_vector; //vector of predictions to allow for evaluation multiple jets, but only using one at the moment
   tensorflow::Tensor prediction;
   std::vector<float> NNoutputs;
@@ -123,7 +123,6 @@ std::vector<float> BESTEvaluation::getPrediction(const float HImage[31][31], con
                   inputTensors_,
                   {outputName_},
                   &pred_vector);
-
 
 
   prediction = tensorflow::Tensor(tensorflow::DT_FLOAT, {1, 6}); //6 here for the number of outputs

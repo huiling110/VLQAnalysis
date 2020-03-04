@@ -22,7 +22,7 @@ class BESTEvaluation {
     cache_(cache)
     {}
   void configure(const edm::ParameterSet&);
-  std::vector<float> getPrediction(const float HImage[31][31], const float TImage[31][31], const float WImage[31][31], const float ZImage[31][31], const std::vector<float> BESTInputs);
+  std::vector<float> getPrediction(const float HImage[31][31], const float TImage[31][31], const float WImage[31][31], const float ZImage[31][31], const std::vector<float> &BESTInputs);
   ~BESTEvaluation() {}
 
 
