@@ -456,10 +456,18 @@ void prepareBoostedImage(const pat::Jet &jet, std::vector<reco::Candidate *> dau
   delete BoostedDaughters;
 }
 
-bool checkJetPt(const pat::Jet &jet){
-  return (jet.pt() > 400);
+bool checkKinematicsOfJets(const std::vector<pat::Jet> &jets, int length){
+  bool check = true;
+  for (int i = 0; i < length; i++){
+    check = check && (jets.at(i).pt() > 400) && (fabs(jets.at(i).eta()) < 2.4);
+  }
+  return check;
 }
 
-bool checkJetLength(const pat::Jet &jet){
-  return ( (jet.subjets("SoftDropPuppi").size() >=2) && (jet.numberOfDaughters() > 2) );
+bool checkLengthOfSubJets(const std::vector<pat::Jet> &jets, int length){
+  bool check = true;
+  for (int i = 0; i < length; i++){
+    check = check && (jets.at(i).subjets("SoftDropPuppi").size() >= 2) && (jets.at(i).numberOfDaughters() > 2);
+  }
+  return check;
 }
