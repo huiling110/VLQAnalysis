@@ -361,7 +361,7 @@ std::vector<float> orderBESTVars(std::map<std::string, float> BESMap, std::vecto
   return orderedBESTVars;
 }
 
-void prepareBoostedImage(const pat::Jet &jet, std::vector<reco::Candidate *> daughtersOfJet, float Image[31][31], const float mass){
+void prepareBoostedImage(const pat::Jet &jet, const std::vector<reco::Candidate *> daughtersOfJet, float Image[31][31], const float mass){
   TLorentzVector thisJetLV(0.,0.,0.,0.);
   reco::Candidate::PolarLorentzVector thisJet = jet.polarP4();
   thisJetLV.SetPtEtaPhiM(thisJet.Pt(), thisJet.Eta(), thisJet.Phi(), mass );
@@ -379,11 +379,14 @@ void prepareBoostedImage(const pat::Jet &jet, std::vector<reco::Candidate *> dau
 
 
   //Sort the new list by energy
-  auto sortLambda = [] (const TLorentzVector& lv1, const TLorentzVector& lv2) {return lv1.E() < lv2.E(); };
+  auto sortLambda = [] (const TLorentzVector& lv1, const TLorentzVector& lv2) {return lv1.E() > lv2.E(); };
   std::sort(BoostedDaughters->begin(), BoostedDaughters->end(), sortLambda);
 
+  //  for(unsigned int i = 0; i < BoostedDaughters->size(); i++){
+  //    std::cout << BoostedDaughters->at(i).E() << std::endl;
+  //  }
+  //  std::cout << std::endl;
 
- 
   //Do the rotations
   float leadPhi = BoostedDaughters->begin()->Phi();
   float leadTheta = BoostedDaughters->begin()->Theta();

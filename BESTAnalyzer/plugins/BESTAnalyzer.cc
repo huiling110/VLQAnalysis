@@ -298,6 +298,13 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
 
   //NN output
   listOfVecVars.push_back("BESTDecision");
+  listOfVecVars.push_back("NNOutputs0");
+  listOfVecVars.push_back("NNOutputs1");
+  listOfVecVars.push_back("NNOutputs2");
+  listOfVecVars.push_back("NNOutputs3");
+  listOfVecVars.push_back("NNOutputs4");
+  listOfVecVars.push_back("NNOutputs5");
+
 
   listOfVars.push_back("HT");
   listOfVars.push_back("HT__JEC_Up");
@@ -477,14 +484,30 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
           prepareBoostedImage(ijet, daughtersOfJet, TImage, 172.5);
           prepareBoostedImage(ijet, daughtersOfJet, WImage, 80.4);
           prepareBoostedImage(ijet, daughtersOfJet, ZImage, 91.2);
-
+	  /*
+	  for (unsigned int ny =0; ny < 31; ny++){
+	    for (unsigned int nx =0; nx < 31; nx++){
+	      std::cout << HImage[nx][ny] << " ";
+	    }
+	    std::cout << std::endl;
+	  }
+	  */
 	  for (auto it = BESTmap.cbegin(); it !=BESTmap.cend(); it++){
 	    treeVecVars[it->first].push_back(it->second);
 	  }
 	  //Plug Jet values into network
 	  BESTScores = BEST_->getPrediction(HImage,TImage,WImage,ZImage,BESTVars);
 	  //Convert from a vector like (0,0,0,1,0) into an int with the decision
-	  float decision = std::distance( begin(BESTScores), std::find_if( std::begin(BESTScores), std::end(BESTScores), [](auto x) { return x != 0; }));
+	  //Currently a float for dumb reasons
+	  float decision = (float) std::distance(BESTScores.begin(), std::max_element(BESTScores.begin(), BESTScores.end() ) );
+	  
+	  treeVecVars["NNOutputs0"].push_back(BESTScores[0]);
+	  treeVecVars["NNOutputs1"].push_back(BESTScores[1]);
+          treeVecVars["NNOutputs2"].push_back(BESTScores[2]);
+          treeVecVars["NNOutputs3"].push_back(BESTScores[3]);
+          treeVecVars["NNOutputs4"].push_back(BESTScores[4]);
+          treeVecVars["NNOutputs5"].push_back(BESTScores[5]);
+
 	  treeVecVars["BESTDecision"].push_back(decision);
 	}
 	jetTree->Fill();
