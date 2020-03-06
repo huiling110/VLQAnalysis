@@ -382,11 +382,6 @@ void prepareBoostedImage(const pat::Jet &jet, const std::vector<reco::Candidate 
   auto sortLambda = [] (const TLorentzVector& lv1, const TLorentzVector& lv2) {return lv1.E() > lv2.E(); };
   std::sort(BoostedDaughters->begin(), BoostedDaughters->end(), sortLambda);
 
-  //  for(unsigned int i = 0; i < BoostedDaughters->size(); i++){
-  //    std::cout << BoostedDaughters->at(i).E() << std::endl;
-  //  }
-  //  std::cout << std::endl;
-
   //Do the rotations
   float leadPhi = BoostedDaughters->begin()->Phi();
   float leadTheta = BoostedDaughters->begin()->Theta();
@@ -473,4 +468,24 @@ bool checkLengthOfSubJets(const std::vector<pat::Jet> &jets, int length){
     check = check && (jets.at(i).subjets("SoftDropPuppi").size() >= 2) && (jets.at(i).numberOfDaughters() > 2);
   }
   return check;
+}
+
+int FindPDGid(const pat::Jet &jet, const std::vector<reco::GenParticle> &GenParticles, bool isSignal_){
+  TLorentzVector l1 = TLorentzVector(jet.pt(), jet.eta(), jet.phi(), jet.energy());
+
+  for (auto cand = GenParticles.begin(); cand != GenParticles.end(); ++cand){
+    TLorentzVector l2 = TLorentzVector(cand->pt(), cand->eta(), cand->phi(), cand->energy());
+    if (l2.DeltaR(l1) < 0.1){
+      if(!isSignal_){ //For normal MC, just care what is associated to jet.  Might return b for a top or Higgs jet though, needs a special exception
+	return abs(cand->pdgId());
+      }
+      //For signal T' (pdgId 8000001) we want to know which particle it decayed into; shouldn't return b for top/H decays
+      else if(cand->mother()){ //Make sure pointer isn't null!
+	if(abs(cand->mother()->pdgId()) == 8000001 && abs(cand->pdgId()) != 8000001){
+	  return abs(cand->pdgId());
+	}
+      }
+    }
+  }
+  return -999;
 }

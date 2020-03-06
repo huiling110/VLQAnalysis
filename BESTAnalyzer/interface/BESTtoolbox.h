@@ -61,4 +61,7 @@ void prepareBoostedImage(const pat::Jet &jet, std::vector<reco::Candidate *> dau
 bool checkKinematicsOfJets(const std::vector<pat::Jet> &jets, int length);
 
 bool checkLengthOfSubJets(const std::vector<pat::Jet> &jets, int length);
+
+int FindPDGid(const pat::Jet &jet, const std::vector<reco::GenParticle> &GenParticles, bool isSignal_);
+
 #endif

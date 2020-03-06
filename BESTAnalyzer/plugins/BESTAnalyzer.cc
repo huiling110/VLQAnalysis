@@ -120,8 +120,9 @@ private:
   std::map<std::string, float> treeVars;
   std::vector<std::string> listOfVars;
   std::map<std::string, std::vector<float> > treeVecVars;
+  std::map<std::string, std::vector<int> > intVecVars;
   std::vector<std::string> listOfVecVars;
-
+  std::vector<std::string> listOfIntVecVars;
   //Tokens
   edm::EDGetTokenT<std::vector<pat::Jet> > ak8JetsToken_;
   edm::EDGetTokenT<std::vector<reco::GenParticle> > genPartToken_;
@@ -139,7 +140,8 @@ private:
   std::string name_;
   edm::FileInPath path_;
   edm::FileInPath means_;
-  
+  bool isMC_;
+  bool isSignal_;
 };
 
 //
@@ -159,7 +161,9 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   //  GT_ (iConfig.getParameter<std::string>("GT")),
   name_ (iConfig.getParameter<std::string>("name")),
   path_ (iConfig.getParameter<edm::FileInPath>("path")),
-  means_ (iConfig.getParameter<edm::FileInPath>("means"))
+  means_ (iConfig.getParameter<edm::FileInPath>("means")),
+  isMC_ (iConfig.getParameter<bool>("isMC")),
+  isSignal_ (iConfig.getParameter<bool>("isSignal"))
 {
   cache_ = new CacheHandler(path_);
   BEST_ = new BESTEvaluation(cache_);
@@ -297,7 +301,7 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   listOfVecVars.push_back("subjet23_DeltaCosTheta_Z");
 
   //NN output
-  listOfVecVars.push_back("BESTDecision");
+  listOfIntVecVars.push_back("BESTDecision");
   listOfVecVars.push_back("NNOutputs0");
   listOfVecVars.push_back("NNOutputs1");
   listOfVecVars.push_back("NNOutputs2");
@@ -331,8 +335,8 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   listOfVars.push_back("Q2WeightDn");
 
   //Signal MC Info
-  listOfVecVars.push_back("VLQDecayMode");
-
+  listOfVars.push_back("VLQDecayMode");
+  listOfIntVecVars.push_back("JetGenID");
   for (unsigned i = 0; i < listOfVars.size(); i++){
     treeVars[ listOfVars[i] ] = -999.99;
     jetTree->Branch( (listOfVars[i]).c_str() , &(treeVars[ listOfVars[i] ]), (listOfVars[i]+"/F").c_str() );
@@ -340,6 +344,10 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
 
   for (unsigned i = 0; i < listOfVecVars.size(); i++){
     jetTree->Branch( (listOfVecVars[i]).c_str() , &(treeVecVars[ listOfVecVars[i] ]) );
+  }
+
+  for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
+    jetTree->Branch( (listOfIntVecVars[i]).c_str() , &(intVecVars[ listOfIntVecVars[i] ]) );
   }
 
   listOfBESTVars_ = {"jetAK8_pt", "jetAK8_mass", "jetAK8_SoftDropMass", "nSecondaryVertices", "bDisc", "bDisc1", "bDisc2", "jetAK8_Tau4", "jetAK8_Tau3", "jetAK8_Tau2", "jetAK8_Tau1", "jetAK8_Tau32", "jetAK8_Tau21", "FoxWolfH1_Higgs", "FoxWolfH2_Higgs", "FoxWolfH3_Higgs", "FoxWolfH4_Higgs", "FoxWolfH1_Top", "FoxWolfH2_Top", "FoxWolfH3_Top", "FoxWolfH4_Top", "FoxWolfH1_W", "FoxWolfH2_W", "FoxWolfH3_W", "FoxWolfH4_W", "FoxWolfH1_Z", "FoxWolfH2_Z", "FoxWolfH3_Z", "FoxWolfH4_Z", "isotropy_Higgs", "sphericity_Higgs", "aplanarity_Higgs", "thrust_Higgs", "sphericity_Top", "aplanarity_Top", "thrust_Top", "sphericity_W", "aplanarity_W", "thrust_W", "sphericity_Z", "aplanarity_Z", "thrust_Z", "nSubjets_Higgs", "nSubjets_Top", "nSubjets_W", "nSubjets_Z", "subjet12_mass_Higgs", "subjet23_mass_Higgs", "subjet13_mass_Higgs", "subjet1234_mass_Higgs", "subjet12_mass_Top", "subjet23_mass_Top", "subjet13_mass_Top", "subjet1234_mass_Top", "subjet12_mass_W", "subjet23_mass_W", "subjet13_mass_W", "subjet1234_mass_W", "subjet12_mass_Z", "subjet23_mass_Z", "subjet13_mass_Z", "subjet1234_mass_Z", "subjet12_CosTheta_Higgs", "subjet23_CosTheta_Higgs", "subjet13_CosTheta_Higgs", "subjet1234_CosTheta_Higgs", "subjet12_CosTheta_Top", "subjet23_CosTheta_Top", "subjet13_CosTheta_Top", "subjet1234_CosTheta_Top", "subjet12_CosTheta_W", "subjet23_CosTheta_W", "subjet13_CosTheta_W", "subjet1234_CosTheta_W", "subjet12_CosTheta_Z", "subjet23_CosTheta_Z", "subjet13_CosTheta_Z", "subjet1234_CosTheta_Z", "subjet12_DeltaCosTheta_Higgs", "subjet13_DeltaCosTheta_Higgs", "subjet23_DeltaCosTheta_Higgs", "subjet12_DeltaCosTheta_Top", "subjet13_DeltaCosTheta_Top", "subjet23_DeltaCosTheta_Top", "subjet12_DeltaCosTheta_W", "subjet13_DeltaCosTheta_W", "subjet23_DeltaCosTheta_W", "subjet12_DeltaCosTheta_Z", "subjet13_DeltaCosTheta_Z","subjet23_DeltaCosTheta_Z", "asymmetry_Higgs", "asymmetry_Top", "asymmetry_W", "asymmetry_Z"};
@@ -355,8 +363,9 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   // Gen Particles
   edm::InputTag genPartTag_;
   genPartTag_ = edm::InputTag("prunedGenParticles", "", "PAT");
-  genPartToken_ = consumes<std::vector<reco::GenParticle> >(genPartTag_);
-
+  if (isMC_){
+    genPartToken_ = consumes<std::vector<reco::GenParticle> >(genPartTag_);
+  }
   // Primary Vertices
   edm::InputTag verticesTag_;
   verticesTag_ = edm::InputTag("offlineSlimmedPrimaryVertices", "", "PAT");
@@ -368,19 +377,21 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   secVerticesToken_ = consumes<std::vector<reco::VertexCompositePtrCandidate> >(secVerticesTag_);
 
   //Generator Event Info For Weights
+  //Only called for MC
   edm::InputTag genEvtInfoTag_;
   genEvtInfoTag_ = edm::InputTag("generator", "", "SIM");
-  genEvtInfoToken_ = consumes<GenEventInfoProduct> (genEvtInfoTag_);
-
   edm::InputTag lheRunInfoProductTag_;
   lheRunInfoProductTag_ = edm::InputTag("externalLHEProducer", "", "SIM");
-  lheRunInfoProductToken_ = consumes<LHERunInfoProduct, edm::InRun> (lheRunInfoProductTag_);
-
   edm::InputTag lheEventProductTag_;
   lheEventProductTag_ = edm::InputTag("externalLHEProducer", "", "SIM");
-  lheEventProductToken_ = consumes<LHEEventProduct> (lheEventProductTag_);
-}
 
+
+  if (isMC_){
+    genEvtInfoToken_ = consumes<GenEventInfoProduct> (genEvtInfoTag_);
+    lheRunInfoProductToken_ = consumes<LHERunInfoProduct, edm::InRun> (lheRunInfoProductTag_);
+    lheEventProductToken_ = consumes<LHEEventProduct> (lheEventProductTag_);
+  }
+}
 
 BESTAnalyzer::~BESTAnalyzer()
 {
@@ -413,9 +424,11 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::vector<pat::Jet> ak8Jets = *ak8JetsCollection.product();
 
   Handle< std::vector<reco::GenParticle> > genPartCollection;
-  iEvent.getByToken(genPartToken_, genPartCollection);
-  std::vector<reco::GenParticle> genPart = *genPartCollection.product();
-
+  std::vector<reco::GenParticle> genPart;
+  if (isMC_){
+    iEvent.getByToken(genPartToken_, genPartCollection);
+    genPart = *genPartCollection.product();
+  }
   Handle< std::vector<reco::Vertex> > vertexCollection;
   iEvent.getByToken(verticesToken_, vertexCollection);
   std::vector<reco::Vertex> pVertices = *vertexCollection.product();
@@ -425,8 +438,9 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::vector<reco::VertexCompositePtrCandidate> secVertices = *secVertexCollection.product();
 
   Handle<GenEventInfoProduct> genEvtInfo;
-  iEvent.getByToken(genEvtInfoToken_, genEvtInfo);
-
+  if(isMC_){
+    iEvent.getByToken(genEvtInfoToken_, genEvtInfo);
+  }
 
   //Get Generator Weights, Systematic Variations
   float EventWeight = genEvtInfo->weight();
@@ -484,14 +498,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
           prepareBoostedImage(ijet, daughtersOfJet, TImage, 172.5);
           prepareBoostedImage(ijet, daughtersOfJet, WImage, 80.4);
           prepareBoostedImage(ijet, daughtersOfJet, ZImage, 91.2);
-	  /*
-	  for (unsigned int ny =0; ny < 31; ny++){
-	    for (unsigned int nx =0; nx < 31; nx++){
-	      std::cout << HImage[nx][ny] << " ";
-	    }
-	    std::cout << std::endl;
-	  }
-	  */
+
 	  for (auto it = BESTmap.cbegin(); it !=BESTmap.cend(); it++){
 	    treeVecVars[it->first].push_back(it->second);
 	  }
@@ -499,7 +506,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	  BESTScores = BEST_->getPrediction(HImage,TImage,WImage,ZImage,BESTVars);
 	  //Convert from a vector like (0,0,0,1,0) into an int with the decision
 	  //Currently a float for dumb reasons
-	  float decision = (float) std::distance(BESTScores.begin(), std::max_element(BESTScores.begin(), BESTScores.end() ) );
+	  int decision = std::distance(BESTScores.begin(), std::max_element(BESTScores.begin(), BESTScores.end() ) );
 	  
 	  treeVecVars["NNOutputs0"].push_back(BESTScores[0]);
 	  treeVecVars["NNOutputs1"].push_back(BESTScores[1]);
@@ -507,8 +514,11 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
           treeVecVars["NNOutputs3"].push_back(BESTScores[3]);
           treeVecVars["NNOutputs4"].push_back(BESTScores[4]);
           treeVecVars["NNOutputs5"].push_back(BESTScores[5]);
-
-	  treeVecVars["BESTDecision"].push_back(decision);
+	  intVecVars["BESTDecision"].push_back(decision);
+	  
+	  if(isMC_){
+	    intVecVars["JetGenID"].push_back(FindPDGid(ijet, genPart, isSignal_));
+	  }
 	}
 	jetTree->Fill();
       }
@@ -517,12 +527,15 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //-------------------------------------------------------------------------------
   // Clear and Reset all tree variables -------------------------------------------
   //-------------------------------------------------------------------------------
-  DontFill:
+ DontFill: //Label to go-to when jets in loop fail a cut
   for (unsigned i = 0; i < listOfVars.size(); i++){
     treeVars[ listOfVars[i] ] = -999.99;
   }
   for (unsigned i = 0; i < listOfVecVars.size(); i++){
     treeVecVars[ listOfVecVars[i] ].clear();
+  }
+  for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
+    intVecVars[ listOfIntVecVars[i] ].clear();
   }
 
 

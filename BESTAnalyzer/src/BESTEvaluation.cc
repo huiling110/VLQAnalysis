@@ -23,7 +23,6 @@ void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
     sigma = sqrt(std::stof(word));
     means_.push_back(mean);
     sigmas_.push_back(sigma);
-    std::cout << mean << ", " << sigma << std::endl;
   }
   inputMeansFile.close();
 
@@ -87,7 +86,6 @@ void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
 
 
   const auto& outName = graph.node(graph.node_size() - 1).name();
-  std::cout << "Output name: " << outName << std::endl;
 
   if (outName!=outputName_) {
     throw cms::Exception("BESTEvaluation")
