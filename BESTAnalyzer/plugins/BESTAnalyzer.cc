@@ -105,15 +105,15 @@ private:
   virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
   virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
   virtual void endJob() override;
-  
-  
+
+
   // ----------member data ---------------------------
   //  edm::EDGetTokenT<TrackCollection> tracksToken_;  //used to select what tracks to read from configuration file
   //input variables from run config file
   std::string inputJetColl_;
-  std::string GT_; //input global tag will be used to decide which year of MC/data is being input                                                                                                           
+  std::string GT_; //input global tag will be used to decide which year of MC/data is being input
 
-  // Tree variables                                                                                                                                                                                               
+  // Tree variables
   TTree *jetTree;
   TH1F *GenWeightTotal;
   TH1F *Cutflow;
@@ -351,13 +351,13 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   }
 
   listOfBESTVars_ = {"jetAK8_pt", "jetAK8_mass", "jetAK8_SoftDropMass", "nSecondaryVertices", "bDisc", "bDisc1", "bDisc2", "jetAK8_Tau4", "jetAK8_Tau3", "jetAK8_Tau2", "jetAK8_Tau1", "jetAK8_Tau32", "jetAK8_Tau21", "FoxWolfH1_Higgs", "FoxWolfH2_Higgs", "FoxWolfH3_Higgs", "FoxWolfH4_Higgs", "FoxWolfH1_Top", "FoxWolfH2_Top", "FoxWolfH3_Top", "FoxWolfH4_Top", "FoxWolfH1_W", "FoxWolfH2_W", "FoxWolfH3_W", "FoxWolfH4_W", "FoxWolfH1_Z", "FoxWolfH2_Z", "FoxWolfH3_Z", "FoxWolfH4_Z", "isotropy_Higgs", "sphericity_Higgs", "aplanarity_Higgs", "thrust_Higgs", "sphericity_Top", "aplanarity_Top", "thrust_Top", "sphericity_W", "aplanarity_W", "thrust_W", "sphericity_Z", "aplanarity_Z", "thrust_Z", "nSubjets_Higgs", "nSubjets_Top", "nSubjets_W", "nSubjets_Z", "subjet12_mass_Higgs", "subjet23_mass_Higgs", "subjet13_mass_Higgs", "subjet1234_mass_Higgs", "subjet12_mass_Top", "subjet23_mass_Top", "subjet13_mass_Top", "subjet1234_mass_Top", "subjet12_mass_W", "subjet23_mass_W", "subjet13_mass_W", "subjet1234_mass_W", "subjet12_mass_Z", "subjet23_mass_Z", "subjet13_mass_Z", "subjet1234_mass_Z", "subjet12_CosTheta_Higgs", "subjet23_CosTheta_Higgs", "subjet13_CosTheta_Higgs", "subjet1234_CosTheta_Higgs", "subjet12_CosTheta_Top", "subjet23_CosTheta_Top", "subjet13_CosTheta_Top", "subjet1234_CosTheta_Top", "subjet12_CosTheta_W", "subjet23_CosTheta_W", "subjet13_CosTheta_W", "subjet1234_CosTheta_W", "subjet12_CosTheta_Z", "subjet23_CosTheta_Z", "subjet13_CosTheta_Z", "subjet1234_CosTheta_Z", "subjet12_DeltaCosTheta_Higgs", "subjet13_DeltaCosTheta_Higgs", "subjet23_DeltaCosTheta_Higgs", "subjet12_DeltaCosTheta_Top", "subjet13_DeltaCosTheta_Top", "subjet23_DeltaCosTheta_Top", "subjet12_DeltaCosTheta_W", "subjet13_DeltaCosTheta_W", "subjet23_DeltaCosTheta_W", "subjet12_DeltaCosTheta_Z", "subjet13_DeltaCosTheta_Z","subjet23_DeltaCosTheta_Z", "asymmetry_Higgs", "asymmetry_Top", "asymmetry_W", "asymmetry_Z"};
-  //------------------------------------------------------------------------------                                                                                                                                  
-  // Define input tags -----------------------------------------------------------                                                                                                                                  
-  //------------------------------------------------------------------------------                                                                                                                                  
+  //------------------------------------------------------------------------------
+  // Define input tags -----------------------------------------------------------
+  //------------------------------------------------------------------------------
 
-  // AK8 Jets                                                                                                                                                                                                       
+  // AK8 Jets
   edm::InputTag ak8JetsTag_;
-  ak8JetsTag_ = edm::InputTag("slimmedJetsAK8", "", "PAT");                                                                                                                                                      
+  ak8JetsTag_ = edm::InputTag("slimmedJetsAK8", "", "PAT");
   ak8JetsToken_ = consumes<std::vector<pat::Jet> >(ak8JetsTag_);
 
   // Gen Particles
@@ -417,7 +417,7 @@ void
 BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
-  
+
 
   Handle< std::vector<pat::Jet> > ak8JetsCollection;
   iEvent.getByToken(ak8JetsToken_, ak8JetsCollection);
@@ -480,7 +480,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	  storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Higgs", 125.);
 	  if (BESTmap["nSubjets_Higgs"] < 3) goto DontFill; //Should be a cleaner way to check this before the first RestFrameVariables call
-	  
+
           storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Top", 172.5);
           storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "W", 80.4);
           storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Z", 91.2);
@@ -507,7 +507,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	  //Convert from a vector like (0,0,0,1,0) into an int with the decision
 	  //Currently a float for dumb reasons
 	  int decision = std::distance(BESTScores.begin(), std::max_element(BESTScores.begin(), BESTScores.end() ) );
-	  
+
 	  treeVecVars["NNOutputs0"].push_back(BESTScores[0]);
 	  treeVecVars["NNOutputs1"].push_back(BESTScores[1]);
           treeVecVars["NNOutputs2"].push_back(BESTScores[2]);
@@ -515,7 +515,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
           treeVecVars["NNOutputs4"].push_back(BESTScores[4]);
           treeVecVars["NNOutputs5"].push_back(BESTScores[5]);
 	  intVecVars["BESTDecision"].push_back(decision);
-	  
+
 	  if(isMC_){
 	    intVecVars["JetGenID"].push_back(FindPDGid(ijet, genPart, isSignal_));
 	  }

@@ -2,7 +2,9 @@
 #include <fstream>
 #include <sstream>
 
-
+//========================================================================================
+// Loads the BEST Neural Network using the tensforflow interface -------------------------
+//----------------------------------------------------------------------------------------
 
 void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
   if(isConfigured_) return;
@@ -40,7 +42,7 @@ void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
   inputShapes_.push_back(tensorflow::TensorShape{1, 31, 31, 1});
   kZ_ = 3;
   inputNames_.push_back("input_5");
-  inputShapes_.push_back(tensorflow::TensorShape{1, NumBESTInputs_}); 
+  inputShapes_.push_back(tensorflow::TensorShape{1, NumBESTInputs_});
   kBEST_ = 4;
   outputName_ = "dense_20/Softmax";
 
@@ -52,7 +54,7 @@ void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
 
   //Now make each element have the correct name and shape
 
-  
+
   for (size_t i=0; i<inputShapes_.size(); i++) {
     inputTensors_[i] = tensorflow::NamedTensor(inputNames_[i], tensorflow::Tensor(tensorflow::DT_FLOAT, inputShapes_.at(i)));
   }
@@ -64,7 +66,7 @@ void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
 
   //The rest of this is a sanity check
   for (size_t i=0; i<inputShapes_.size(); i++){
-    const auto& name = graph.node(i).name(); 
+    const auto& name = graph.node(i).name();
     auto it = std::find(inputNames_.begin(), inputNames_.end(), name);
     if (it==inputNames_.end()) { //Check if input layer name is in the graph
       throw cms::Exception("BESTEvaluation")
@@ -95,11 +97,15 @@ void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
   isConfigured_ = true;
 }
 
+//========================================================================================
+// Get a prediction using the BEST Neural Network ----------------------------------------
+//----------------------------------------------------------------------------------------
+
 std::vector<float> BESTEvaluation::getPrediction(const float HImage[31][31], const float TImage[31][31], const float WImage[31][31], const float ZImage[31][31], const std::vector<float> &BESTInputs){
   std::vector<tensorflow::Tensor> pred_vector; //vector of predictions to allow for evaluation multiple jets, but only using one at the moment
   tensorflow::Tensor prediction;
   std::vector<float> NNoutputs;
-  
+
   inputTensors_.at(kHiggs_).second.flat<float>().setZero();
   inputTensors_.at(kTop_).second.flat<float>().setZero();
   inputTensors_.at(kW_).second.flat<float>().setZero();
@@ -133,7 +139,7 @@ std::vector<float> BESTEvaluation::getPrediction(const float HImage[31][31], con
     if (!(pred >= 0 && pred <= 1)) {
       throw cms::Exception("BESTEvaluation")
 	<< "invalid prediction = " << pred << " for pred_index = " << k;
-    } 
+    }
     prediction.matrix<float>()(0, k) = pred;
   }
   for (int i = 0; i < 6; i++){
