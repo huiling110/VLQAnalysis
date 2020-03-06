@@ -7,7 +7,7 @@ developed with `CMSSW_10_2_8`
 
 ## Repository Structure
 
-BESTAnalyzer is an ntuplizer that makes root trees that output a BEST score.
+`BESTAnalyzer` is an ntuplizer that makes root trees that include an output BEST score.
 
 ## Some useful git commands
 
