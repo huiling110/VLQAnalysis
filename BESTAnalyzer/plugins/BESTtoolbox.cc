@@ -120,7 +120,7 @@ void getJetDaughters(std::vector<reco::Candidate * > &daughtersOfJet, const pat:
 
 void storeJetVariables(std::map<std::string, float> &BESTVars, const pat::Jet &jet, const std::vector<reco::VertexCompositePtrCandidate> &secVertices)
 {//This method stores the lab frame variables used in BEST to a map
-  
+
   BESTVars["jetAK8_pt"] = jet.pt();
   BESTVars["jetAK8_mass"] = jet.mass();
   BESTVars["jetAK8_SoftDropMass"] = jet.userFloat("ak8PFJetsPuppiSoftDropMass");
@@ -145,7 +145,7 @@ void storeJetVariables(std::map<std::string, float> &BESTVars, const pat::Jet &j
       numMatched++;
     }
   }
-  BESTVars["nSecondaryVertices"] = numMatched;  
+  BESTVars["nSecondaryVertices"] = numMatched;
 
 }
 
@@ -345,13 +345,22 @@ void pboost( TVector3 pbeam, TVector3 plab, TLorentzVector &pboo ){
 
 }
 
+//========================================================================================
+// Prepare a map of properly ordered BES variables ---------------------------------------
+//----------------------------------------------------------------------------------------
+//Takes an empty map and fills it in the correct order with the BEST inputs --------------
+//This order is determined by the variable order presented in the network training -------
+//----------------------------------------------------------------------------------------
+
 void initBESTVars(std::map<std::string, float> &BESMap, std::vector<std::string> listOfBESTVars){
-  //Takes an empty map and fills it in the correct order with the BEST inputs
-  //This order is determined by the variable order presented in the network training
   for (unsigned int i=0; i < listOfBESTVars.size(); i++){
     BESMap[listOfBESTVars[i]] = -999;
   }
 }
+
+//========================================================================================
+// Use the map to  make a vector of ordered BES variables --------------------------------
+//----------------------------------------------------------------------------------------
 
 std::vector<float> orderBESTVars(std::map<std::string, float> BESMap, std::vector<std::string> listOfBESTVars){
   std::vector<float> orderedBESTVars;
@@ -360,6 +369,12 @@ std::vector<float> orderBESTVars(std::map<std::string, float> BESMap, std::vecto
   }
   return orderedBESTVars;
 }
+
+//========================================================================================
+// Make the Boosted Jet Images -----------------------------------------------------------
+//----------------------------------------------------------------------------------------
+// Make the images that will be run through BEST -----------------------------------------
+//----------------------------------------------------------------------------------------
 
 void prepareBoostedImage(const pat::Jet &jet, const std::vector<reco::Candidate *> daughtersOfJet, float Image[31][31], const float mass){
   TLorentzVector thisJetLV(0.,0.,0.,0.);
@@ -429,7 +444,7 @@ void prepareBoostedImage(const pat::Jet &jet, const std::vector<reco::Candidate 
   }
   //find the x and y coordinates in phi, theta binned space
   //Then fill Image with normalized energy
-  
+
   for(auto lv = BoostedDaughters->begin(); lv != BoostedDaughters->end(); lv++){
     int x_bin = -1;
     int y_bin = -1;
@@ -449,7 +464,7 @@ void prepareBoostedImage(const pat::Jet &jet, const std::vector<reco::Candidate 
       y_bin = static_cast<int>(31*(-lv->Phi() + TMath::Pi())/(2.0 * TMath::Pi()));
       y_bin = y_bin%31;
     }
-    Image[x_bin][y_bin] += lv->E()/leadE ;    
+    Image[x_bin][y_bin] += lv->E()/leadE ;
   }
   delete BoostedDaughters;
 }
