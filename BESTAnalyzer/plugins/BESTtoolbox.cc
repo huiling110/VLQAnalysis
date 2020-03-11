@@ -237,7 +237,7 @@ void storeRestFrameVariables(std::map<std::string, float> &BESTVars, std::vector
 	//Why?????
 	//        if (daughtersOfJet[i]->pt() < 10) continue;
         sumPz += thisParticleLV.Pz();
-        sumP += abs( thisParticleLV.P() );
+        sumP += std::fabs( thisParticleLV.P() );
     }
 
     // Fox Wolfram Moments
@@ -472,7 +472,7 @@ void prepareBoostedImage(const pat::Jet &jet, const std::vector<reco::Candidate 
 bool checkKinematicsOfJets(const std::vector<pat::Jet> &jets, int length){
   bool check = true;
   for (int i = 0; i < length; i++){
-    check = check && (jets.at(i).pt() > 400) && (fabs(jets.at(i).eta()) < 2.4);
+    check = check && (jets.at(i).pt() > 400) && (std::fabs(jets.at(i).eta()) < 2.4);
   }
   return check;
 }
@@ -486,21 +486,41 @@ bool checkLengthOfSubJets(const std::vector<pat::Jet> &jets, int length){
 }
 
 int FindPDGid(const pat::Jet &jet, const std::vector<reco::GenParticle> &GenParticles, bool isSignal_){
-  TLorentzVector l1 = TLorentzVector(jet.pt(), jet.eta(), jet.phi(), jet.energy());
-
+  TLorentzVector l1(jet.px(), jet.py(), jet.pz(), jet.energy());
+  TLorentzVector match (0., 0., 0., 0.);
+  reco::GenParticle matchCand;
+  bool set = false;
   for (auto cand = GenParticles.begin(); cand != GenParticles.end(); ++cand){
-    TLorentzVector l2 = TLorentzVector(cand->pt(), cand->eta(), cand->phi(), cand->energy());
+    TLorentzVector l2(cand->px(), cand->py(), cand->pz(), cand->energy());
     if (l2.DeltaR(l1) < 0.1){
       if(!isSignal_){ //For normal MC, just care what is associated to jet.  Might return b for a top or Higgs jet though, needs a special exception
-	return abs(cand->pdgId());
+	if (!set){
+	  matchCand = (*cand);
+	  match = l2;
+	  set = true;
+	}
+	else if(l2.DeltaR(l1) < l2.DeltaR(match)){
+	  matchCand = (*cand);
+	  match = l2;
+	}
       }
       //For signal T' (pdgId 8000001) we want to know which particle it decayed into; shouldn't return b for top/H decays
-      else if(cand->mother()){ //Make sure pointer isn't null!
+      else if(cand->mother()){ //Make sure pointer isn't null!	
 	if(abs(cand->mother()->pdgId()) == 8000001 && abs(cand->pdgId()) != 8000001){
-	  return abs(cand->pdgId());
+	  if (!set){ 
+	    matchCand = (*cand);
+	    match = l2;
+	    set = true;
+	  }
+	  else if(l2.DeltaR(l1) < l2.DeltaR(match)){
+	    matchCand = (*cand);
+	    match = l2;
+	  }
 	}
       }
     }
   }
-  return -999;
+  if (!set){ return 0;}
+  return abs(matchCand.pdgId());
 }
+  
