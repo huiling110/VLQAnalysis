@@ -361,9 +361,10 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   ak8JetsToken_ = consumes<std::vector<pat::Jet> >(ak8JetsTag_);
 
   // Gen Particles
-  edm::InputTag genPartTag_;
-  genPartTag_ = edm::InputTag("prunedGenParticles", "", "PAT");
+
   if (isMC_){
+    edm::InputTag genPartTag_;
+    genPartTag_ = edm::InputTag("prunedGenParticles", "", "PAT");
     genPartToken_ = consumes<std::vector<reco::GenParticle> >(genPartTag_);
   }
   // Primary Vertices
@@ -378,15 +379,13 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
 
   //Generator Event Info For Weights
   //Only called for MC
-  edm::InputTag genEvtInfoTag_;
-  genEvtInfoTag_ = edm::InputTag("generator", "", "SIM");
-  edm::InputTag lheRunInfoProductTag_;
-  lheRunInfoProductTag_ = edm::InputTag("externalLHEProducer", "", "SIM");
-  edm::InputTag lheEventProductTag_;
-  lheEventProductTag_ = edm::InputTag("externalLHEProducer", "", "SIM");
-
-
   if (isMC_){
+    edm::InputTag genEvtInfoTag_;
+    genEvtInfoTag_ = edm::InputTag("generator", "", "SIM");
+    edm::InputTag lheRunInfoProductTag_;
+    lheRunInfoProductTag_ = edm::InputTag("externalLHEProducer", "", "SIM");
+    edm::InputTag lheEventProductTag_;
+    lheEventProductTag_ = edm::InputTag("externalLHEProducer", "", "SIM");
     genEvtInfoToken_ = consumes<GenEventInfoProduct> (genEvtInfoTag_);
     lheRunInfoProductToken_ = consumes<LHERunInfoProduct, edm::InRun> (lheRunInfoProductTag_);
     lheEventProductToken_ = consumes<LHEEventProduct> (lheEventProductTag_);
