@@ -18,25 +18,23 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/mc/RunIIFall17MiniAODv2/TprimeTprime_M-1400_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/30000/626C8F3E-4962-E811-8F8A-008CFAE4504C.root'
+        '/store/mc/RunIIFall17MiniAODv2/QCD_Pt-15to7000_TuneCP5_Flat2017_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/70000/AA231798-AA43-E811-BCDC-0CC47A7C35A8.root'
         )
                             )
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 
 process.run = cms.EDAnalyzer('BESTAnalyzer',
-#                             graphDefinitions = cms.VPSet(
                              name = cms.string('BESTGraph'),
-                             path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/data/constantgraph.pb'),
-                             means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/data/ScalerParameters.txt'),
-#        ),
+                             path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/constantgraph.pb'),
+                             means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/ScalerParameters.txt'),
                              inputJetColl = cms.string('selectedAK8Jets'),
                              isMC = cms.bool(True),
-                             isSignal = cms.bool(True),
+                             isSignal = cms.bool(False),
                              GT_ = cms.string(GT)
                              )
 
-process.TFileService = cms.Service("TFileService", fileName = cms.string("BESToutputs.root") )
+process.TFileService = cms.Service("TFileService", fileName = cms.string("BESTInputs.root") )
 
 process.out = cms.OutputModule("PoolOutputModule",
                                fileName = cms.untracked.string("ana_out.root"),
