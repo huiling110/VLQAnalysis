@@ -443,9 +443,11 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   //Get Generator Weights, Systematic Variations
-  float EventWeight = genEvtInfo->weight();
-  GenWeightTotal->Fill(1, EventWeight);
-
+  if(isMC_){
+    float EventWeight = genEvtInfo->weight();
+    GenWeightTotal->Fill(1, EventWeight);
+    treeVars["EvtWeight"] = EventWeight;
+  }
   //Cutflow: First stage will just equal to number of events
   Cutflow->Fill(0);
 
@@ -459,7 +461,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	Cutflow->Fill(3);
 
 	treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
-	treeVars["EvtWeight"] = EventWeight;
+
 
 	//Fills map with basic kinematic variables
 	for (int i = 0; i < 4; i++){
