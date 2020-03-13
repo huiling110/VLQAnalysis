@@ -3,7 +3,7 @@
 ## Dependencies
 
 This code requires the binary file of [BEST](https://gitlab.cern.ch/boostedeventshapetagger/BEST). This code is being
-developed with `CMSSW_10_2_8`
+developed with `CMSSW_10_2_18`
 
 ## Repository Structure
 

@@ -1,0 +1,50 @@
+stages:
+  - setup
+  - compile
+
+# Global Variables
+variables: 
+  CMS_PATH: /cvmfs/cms.cern.ch # This is also set on LXPLUS
+  CMSSW_RELEASE: CMSSW_10_2_18
+
+# If this stage is passed, then cmssw sets up correctly
+cmssw_setup:
+  stage: setup
+  tags:
+    - cvmfs
+  script:
+    # aliases must be expanded in noninteractive bash mode
+    - shopt -s expand_aliases
+    # access cvmfs
+    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
+    - cmsrel ${CMSSW_RELEASE}
+    - cd ${CMSSW_RELEASE}/src
+    - cmsenv
+    - cmsRun --help
+  artifacts:
+    paths: 
+      - ${CMSSW_RELEASE}/
+
+
+# If this stage is passed, then VLQ analysis compiles correctly
+VLQ_compile:
+  stage: compile
+  tags:
+    - cvmfs
+  script:
+    - cd ${CMSSW_RELEASE}/src
+    # aliases must be expanded in noninteractive bash mode
+    - shopt -s expand_aliases
+    - set +u && source ${CMS_PATH}/cmsset_default.sh; set -u
+    - cmsenv
+    # copy files for BEST
+    - mkdir -p VLQAnalysis
+    - cp -r "${CI_PROJECT_DIR}/BESTAnalyzer" "${CMSSW_BASE}/src/VLQAnalysis"
+    # compile
+    - scram b
+  artifacts:
+    paths: 
+      - ${CMSSW_RELEASE}/
+
+
+
