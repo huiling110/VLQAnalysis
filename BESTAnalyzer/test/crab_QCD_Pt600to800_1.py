@@ -2,19 +2,19 @@ from WMCore.Configuration import Configuration
 config = Configuration()
 
 config.section_("General")
-config.General.requestName = 'Tprime_1400GeV'
+config.General.requestName = 'QCD600_1'
 config.General.workArea = 'CrabBEST'
 config.General.transferLogs = True
 
 config.section_("JobType")
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = 'run_Tprime.py'
+config.JobType.psetName = 'run_QCD.py'
 config.JobType.inputFiles = ['/uscms_data/d3/rband/TT_Analysis/CMSSW_10_2_18/src/VLQAnalysis/BESTAnalyzer/data/constantgraph.pb', '/uscms_data/d3/rband/TT_Analysis/CMSSW_10_2_18/src/VLQAnalysis/BESTAnalyzer/data/ScalerParameters.txt']
 config.JobType.outputFiles = ['BESToutputs.root']
 #config.JobType.allowUndistributedCMSSW = True
 
 config.section_("Data")
-config.Data.inputDataset = '/TprimeTprime_M-1400_TuneCP5_13TeV-madgraph-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/MINIAODSIM'
+config.Data.inputDataset = '/QCD_Pt_600to800_TuneCP5_13TeV_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM'
 config.Data.splitting = 'FileBased'
 config.Data.unitsPerJob = 5
 config.Data.ignoreLocality = True
