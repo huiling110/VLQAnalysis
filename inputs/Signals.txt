@@ -1,0 +1,7 @@
+## Write here the DataSets of signal that should be used.
+## It may be that there are different samples for different years. If so, make the appropriate files and use this as documentation.
+
+## VLQ
+# mc15.123456.VLQ.nanoAOD.root
+
+## etc.
