@@ -1,0 +1,8 @@
+## Document here the locations of the output ntuples
+## This doesn't exist yet but example below
+
+## LPC
+#/eos/somewhere/myOutputBackgroundQCD.root
+
+## lxplus
+#/afs/cern.ch/cms/jbonilla/public/myOutputBackgroundQCD.root

@@ -1,0 +1,11 @@
+## Write here the DataSets of backgrounds that should be used.
+## It may be that there are different samples for different years. If so, make the appropriate files and use this as documentation.
+
+## QCD
+# mc15.123456.QCD.nanoAOD.root
+
+## WJets
+
+## ttbar
+
+## etc.

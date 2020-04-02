@@ -1,0 +1,7 @@
+## Write here the DataSets of data that should be used.
+## It may be that there are different samples for different years. If so, make the appropriate files and use this as documentation.
+
+## Period A
+# data15_13TeV.PeriodA.nanoAOD.root
+
+## etc.
