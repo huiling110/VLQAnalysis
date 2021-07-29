@@ -35,6 +35,7 @@ process.run = cms.EDAnalyzer('BESTAnalyzer',
                              )
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("BESTInputs.root") )
+#???what is the role of a cms.Service ?
 
 process.out = cms.OutputModule("PoolOutputModule",
                                fileName = cms.untracked.string("ana_out.root"),
