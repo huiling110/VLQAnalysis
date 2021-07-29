@@ -40,16 +40,14 @@ process.run = cms.EDAnalyzer('BESTAnalyzer',
 process.TFileService = cms.Service("TFileService", fileName = cms.string("BESTInputs.root") )
 #???what is the role of a cms.Service ?
 
-process.out = cms.OutputModule("PoolOutputModule",
-                               fileName = cms.untracked.string("ana_out.root"),
-                               SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
-                               outputCommands = cms.untracked.vstring('drop *',
-								      'keep *_fixedGridRhoAll_*_*',
-                                                                      'keep *_run_*_*',
-                                                                      #, 'keep *_goodPatJetsCATopTagPF_*_*'
-                                                                      #, 'keep recoPFJets_*_*_*'
-                                                                      ) 
-                               )
-process.outpath = cms.EndPath(process.out)
-
+#  process.out = cms.OutputModule("PoolOutputModule",
+                               #  fileName = cms.untracked.string("ana_out.root"),
+                               #  SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
+                               #  outputCommands = cms.untracked.vstring('drop *',
+								      #  'keep *_fixedGridRhoAll_*_*',
+                                                                      #  'keep *_run_*_*',
+                                                                      #  )
+                               #  )
+#  process.outpath = cms.EndPath(process.out)
+#
 process.p = cms.Path(process.run)
