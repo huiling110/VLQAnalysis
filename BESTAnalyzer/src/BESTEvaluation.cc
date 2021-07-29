@@ -49,7 +49,7 @@ void BESTEvaluation::configure(const edm::ParameterSet& iConfig){
 
   //Now set the internal tensor list to the size of your inputs
 
-  inputTensors_.resize(inputShapes_.size());
+  inputTensors_.resize(inputShapes_.size()); //tensorflow::NamedTensorList
 
 
   //Now make each element have the correct name and shape

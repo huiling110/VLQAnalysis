@@ -72,6 +72,7 @@
 #include "VLQAnalysis/BESTAnalyzer/interface/BESTtoolbox.h"
 #include "VLQAnalysis/BESTAnalyzer/interface/CacheHandler.h"
 #include "VLQAnalysis/BESTAnalyzer/src/CacheHandler.cc"
+//???why include a .cc file?
 #include "VLQAnalysis/BESTAnalyzer/interface/BESTEvaluation.h"
 
 //
@@ -159,14 +160,14 @@ private:
 BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   inputJetColl_ (iConfig.getParameter<std::string>("inputJetColl")),
   //  GT_ (iConfig.getParameter<std::string>("GT")),
-  name_ (iConfig.getParameter<std::string>("name")),
-  path_ (iConfig.getParameter<edm::FileInPath>("path")),
-  means_ (iConfig.getParameter<edm::FileInPath>("means")),
+  name_ (iConfig.getParameter<std::string>("name")), //BESTGraph
+  path_ (iConfig.getParameter<edm::FileInPath>("path")), //VLQAnalysis/BESTAnalyzer/test/constantgraph.pb
+  means_ (iConfig.getParameter<edm::FileInPath>("means")),//ScalerParameters.txt
   isMC_ (iConfig.getParameter<bool>("isMC")),
   isSignal_ (iConfig.getParameter<bool>("isSignal"))
 {
-  cache_ = new CacheHandler(path_);
-  BEST_ = new BESTEvaluation(cache_);
+  cache_ = new CacheHandler(path_); // Class to create an instance of a tensorflow session that loads the trained BEST network from a .pb file as a graph
+  BEST_ = new BESTEvaluation(cache_); //Loads the BEST Neural Network using the tensforflow interface
   BEST_->configure(iConfig);
 
 

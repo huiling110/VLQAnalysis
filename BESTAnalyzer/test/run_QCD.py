@@ -13,7 +13,8 @@ process.load("JetMETCorrections.Configuration.JetCorrectionServices_cff")
 process.load("JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff")
 process.GlobalTag = GlobalTag(process.GlobalTag, GT)
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
+#  process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
 
 
 process.source = cms.Source("PoolSource",
@@ -26,8 +27,10 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.run = cms.EDAnalyzer('BESTAnalyzer',
                              name = cms.string('BESTGraph'),
-                             path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/constantgraph.pb'),
-                             means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/ScalerParameters.txt'),
+                             #  path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/constantgraph.pb'),
+                             #  means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/ScalerParameters.txt'),
+                             path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/data/constantgraph.pb'),
+                             means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/data/ScalerParameters.txt'),
                              inputJetColl = cms.string('selectedAK8Jets'),
                              isMC = cms.bool(True),
                              isSignal = cms.bool(False),

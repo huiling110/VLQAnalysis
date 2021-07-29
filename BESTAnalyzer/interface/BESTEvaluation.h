@@ -19,6 +19,7 @@ class BESTEvaluation {
  public:
   BESTEvaluation(const CacheHandler* cache)
     : isConfigured_(false),
+    //???what is this last line doing?
     cache_(cache)
     {}
   void configure(const edm::ParameterSet&);
@@ -42,6 +43,8 @@ class BESTEvaluation {
   std::vector<tensorflow::TensorShape> inputShapes_;
   std::vector<std::string> inputNames_;
   tensorflow::NamedTensorList inputTensors_;
+                             path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/constantgraph.pb'),
+                             means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/ScalerParameters.txt'),
   size_t kHiggs_;
   size_t kTop_;
   size_t kW_;

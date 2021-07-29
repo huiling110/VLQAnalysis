@@ -11,7 +11,7 @@ CacheHandler::CacheHandler(const edm::FileInPath GraphPath){ //, const std::stri
   tensorflow::SessionOptions options;
   tensorflow::setThreading(options, 1, "no_threads");
   std::string FullPath = GraphPath.fullPath();
-  graph_.reset(tensorflow::loadGraphDef(FullPath));
+  graph_.reset(tensorflow::loadGraphDef(FullPath)); //std::shared_ptr<tensorflow::GraphDef>
   session_ = tensorflow::createSession(graph_.get(), options);
 
 }
