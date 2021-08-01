@@ -43,8 +43,6 @@ class BESTEvaluation {
   std::vector<tensorflow::TensorShape> inputShapes_;
   std::vector<std::string> inputNames_;
   tensorflow::NamedTensorList inputTensors_;
-                             path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/constantgraph.pb'),
-                             means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/ScalerParameters.txt'),
   size_t kHiggs_;
   size_t kTop_;
   size_t kW_;
