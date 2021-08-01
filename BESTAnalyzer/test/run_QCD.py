@@ -31,6 +31,8 @@ process.run = cms.EDAnalyzer('BESTAnalyzer',
                              #  means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/test/ScalerParameters.txt'),
                              path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/data/constantgraph.pb'),
                              means = cms.FileInPath('VLQAnalysis/BESTAnalyzer/data/ScalerParameters.txt'),
+                             #  path = cms.string( 'VLQAnalysis/BESTAnalyzer/data/constantgraph.pb'),
+                             #  means = cms.string( 'VLQAnalysis/BESTAnalyzer/data/ScalerParameters.txt')
                              inputJetColl = cms.string('selectedAK8Jets'),
                              isMC = cms.bool(True),
                              isSignal = cms.bool(False),
@@ -38,7 +40,10 @@ process.run = cms.EDAnalyzer('BESTAnalyzer',
                              )
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("BESTInputs.root") )
-#???what is the role of a cms.Service ?
+#what is the role of a cms.Service ?
+#Files are stored in different directories, each having the same name as the label of the module that called the service.
+#have to all this in python config for c++ to use
+#edm::Service<TFileService> fs
 
 #  process.out = cms.OutputModule("PoolOutputModule",
                                #  fileName = cms.untracked.string("ana_out.root"),
