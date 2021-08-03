@@ -446,7 +446,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //Get Generator Weights, Systematic Variations
   if(isMC_){
     float EventWeight = genEvtInfo->weight();
-    std::cout<<"EventWeight="<<EventWeight<<"\n";
+    // std::cout<<"EventWeight="<<EventWeight<<"\n";
     GenWeightTotal->Fill(1, EventWeight);
     treeVars["EvtWeight"] = EventWeight;
   }
@@ -456,26 +456,25 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //Begin pre-selections
   if (ak8Jets.size() > 3){
       Cutflow->Fill(1);
-      std::cout<<__LINE__<<"\n";
       //Cutting on GeV > 400 for analysis, remember that the network is only trained on > 500!
       if (checkKinematicsOfJets(ak8Jets, 4) ){
+          //in plugins/BESTtoolbox.cc
           Cutflow->Fill(2);
-          std::cout<<__LINE__<<"\n";
           if (checkLengthOfSubJets(ak8Jets, 4) ){
               Cutflow->Fill(3);
-              std::cout<<__LINE__<<"\n";
 
               treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
-              std::cout<<"HT = "<<treeVars["HT"]<<"\n";
+              // std::cout<<"HT = "<<treeVars["HT"]<<"\n";
 
 
               //Fills map with basic kinematic variables
               for (int i = 0; i < 4; i++){
+                  //???it seems it only uses leading 4 jet?
                   const pat::Jet& ijet = ak8Jets[i];
                   treeVecVars["jetAK8_phi"].push_back(ijet.phi());
                   treeVecVars["jetAK8_eta"].push_back(ijet.eta());
 
-                  std::map<std::string, float> BESTmap;
+                  std::map<std::string, float> BESTmap;//so one map for ijet?
                   std::vector<float> BESTScores;
 
                   initBESTVars(BESTmap, listOfBESTVars_);
@@ -527,7 +526,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   if(isMC_){
                       intVecVars["JetGenID"].push_back(FindPDGid(ijet, genPart, isSignal_));
                   }
-              }
+              }//4 ijet loop
               jetTree->Fill();
           }
       }
