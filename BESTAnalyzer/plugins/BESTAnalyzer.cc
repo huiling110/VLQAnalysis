@@ -456,11 +456,14 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //Begin pre-selections
   if (ak8Jets.size() > 3){
       Cutflow->Fill(1);
+      std::cout<<__LINE__<<"\n";
       //Cutting on GeV > 400 for analysis, remember that the network is only trained on > 500!
       if (checkKinematicsOfJets(ak8Jets, 4) ){
           Cutflow->Fill(2);
+          std::cout<<__LINE__<<"\n";
           if (checkLengthOfSubJets(ak8Jets, 4) ){
               Cutflow->Fill(3);
+              std::cout<<__LINE__<<"\n";
 
               treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
               std::cout<<"HT = "<<treeVars["HT"]<<"\n";

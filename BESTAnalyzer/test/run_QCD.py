@@ -14,7 +14,7 @@ process.load("JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff"
 process.GlobalTag = GlobalTag(process.GlobalTag, GT)
 
 #  process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 
 
 process.source = cms.Source("PoolSource",
@@ -22,7 +22,7 @@ process.source = cms.Source("PoolSource",
         '/store/mc/RunIIFall17MiniAODv2/QCD_Pt-15to7000_TuneCP5_Flat2017_13TeV_pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/70000/AA231798-AA43-E811-BCDC-0CC47A7C35A8.root'
         )
                             )
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 
 process.run = cms.EDAnalyzer('BESTAnalyzer',

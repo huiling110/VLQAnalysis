@@ -13,7 +13,6 @@ process.load("JetMETCorrections.Configuration.JetCorrectionServices_cff")
 process.load("JetMETCorrections.Configuration.JetCorrectionServicesAllAlgos_cff")
 process.GlobalTag = GlobalTag(process.GlobalTag, GT)
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
 
 
 process.source = cms.Source("PoolSource",
@@ -23,6 +22,8 @@ process.source = cms.Source("PoolSource",
                             )
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
+
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
 
 process.run = cms.EDAnalyzer('BESTAnalyzer',
 #                             graphDefinitions = cms.VPSet(
@@ -38,16 +39,14 @@ process.run = cms.EDAnalyzer('BESTAnalyzer',
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string("BESToutputs.root") )
 
-process.out = cms.OutputModule("PoolOutputModule",
-                               fileName = cms.untracked.string("ana_out.root"),
-                               SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
-                               outputCommands = cms.untracked.vstring('drop *',
-								      'keep *_fixedGridRhoAll_*_*',
-                                                                      'keep *_run_*_*',
-                                                                      #, 'keep *_goodPatJetsCATopTagPF_*_*'
-                                                                      #, 'keep recoPFJets_*_*_*'
-                                                                      ) 
-                               )
-process.outpath = cms.EndPath(process.out)
+#  process.out = cms.OutputModule("PoolOutputModule",
+                               #  fileName = cms.untracked.string("ana_out.root"),
+                               #  SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
+                               #  outputCommands = cms.untracked.vstring('drop *',
+								      #  'keep *_fixedGridRhoAll_*_*',
+                                                                      #  'keep *_run_*_*',
+                                                                      #  )
+                               #  )
+#  process.outpath = cms.EndPath(process.out)
 
 process.p = cms.Path(process.run)
