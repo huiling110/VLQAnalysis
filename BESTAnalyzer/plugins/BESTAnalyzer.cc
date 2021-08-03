@@ -445,6 +445,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   //Get Generator Weights, Systematic Variations
   if(isMC_){
     float EventWeight = genEvtInfo->weight();
+    std::cout<<"EventWeight="<<EventWeight<<"\n";
     GenWeightTotal->Fill(1, EventWeight);
     treeVars["EvtWeight"] = EventWeight;
   }
