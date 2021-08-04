@@ -88,12 +88,13 @@
 //using reco::TrackCollection;
 
 //class BESTAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
-class BESTAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources, edm::one::WatchRuns > {
+// class BESTAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources, edm::one::WatchRuns > {
+class BESTProducer_v2 : public edm::stream::EDProducer<> {
 public:
   //  explicit BESTAnalyzer(const edm::ParameterSet&, const CacheHandler*);
-  explicit BESTAnalyzer(const edm::ParameterSet&);
+  explicit BESTProducer_v2(const edm::ParameterSet&);
 
-  ~BESTAnalyzer();
+  ~BESTProducer_v2();
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
   //  static std::unique_ptr<CacheHandler> initializeGlobalCache(const edm::ParameterSet& cfg);
@@ -101,11 +102,14 @@ public:
 
 
 private:
-  virtual void beginJob() override;
-  virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
-  virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
-  virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
-  virtual void endJob() override;
+  // virtual void beginJob() override;
+  // virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
+  // virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
+  // virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
+  // virtual void endJob() override;
+      virtual void beginStream(edm::StreamID) override;
+      virtual void produce(edm::Event&, const edm::EventSetup&) override;
+      virtual void endStream() override;
 
 
   // ----------member data ---------------------------
@@ -115,9 +119,9 @@ private:
   std::string GT_; //input global tag will be used to decide which year of MC/data is being input
 
   // Tree variables
-  TTree *jetTree;
-  TH1F *GenWeightTotal;
-  TH1F *Cutflow;
+  // TTree *jetTree;
+  // TH1F *GenWeightTotal;
+  // TH1F *Cutflow;
   std::map<std::string, float> treeVars;
   std::vector<std::string> listOfVars;
   std::map<std::string, std::vector<float> > treeVecVars;
@@ -157,7 +161,7 @@ private:
 // constructors and destructor
 //
 //BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig, const CacheHandler* cache):
-BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
+BESTProducer_v2::BESTProducer_v2(const edm::ParameterSet& iConfig):
   inputJetColl_ (iConfig.getParameter<std::string>("inputJetColl")),
   //  GT_ (iConfig.getParameter<std::string>("GT")),
   name_ (iConfig.getParameter<std::string>("name")), //BESTGraph
@@ -174,10 +178,10 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
 
   //now do what ever initialization is needed
   //???not sure why the output file has a dir "run"?
-  edm::Service<TFileService> fs;
-  jetTree = fs->make<TTree>("jetTree","jetTree");
-  GenWeightTotal = fs->make<TH1F>("GenWeightTotal", "GenWeightTotal", 1, 0.5, 1.5);
-  Cutflow = fs->make<TH1F>("Cutflow", "Cutflow", 7, 0, 6);
+  // edm::Service<TFileService> fs;
+  // jetTree = fs->make<TTree>("jetTree","jetTree");
+  // GenWeightTotal = fs->make<TH1F>("GenWeightTotal", "GenWeightTotal", 1, 0.5, 1.5);
+  // Cutflow = fs->make<TH1F>("Cutflow", "Cutflow", 7, 0, 6);
 
   //Store the BEST variables for each jet
   listOfVars.push_back("nJets");//std::vector<std::string> listOfVars
@@ -339,18 +343,18 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
   //Signal MC Info
   listOfVars.push_back("VLQDecayMode");
   listOfIntVecVars.push_back("JetGenID");
-  for (unsigned i = 0; i < listOfVars.size(); i++){
-    treeVars[ listOfVars[i] ] = -999.99;
-    jetTree->Branch( (listOfVars[i]).c_str() , &(treeVars[ listOfVars[i] ]), (listOfVars[i]+"/F").c_str() );
-  }
-
-  for (unsigned i = 0; i < listOfVecVars.size(); i++){
-    jetTree->Branch( (listOfVecVars[i]).c_str() , &(treeVecVars[ listOfVecVars[i] ]) );
-  }
-
-  for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
-    jetTree->Branch( (listOfIntVecVars[i]).c_str() , &(intVecVars[ listOfIntVecVars[i] ]) );
-  }
+  // for (unsigned i = 0; i < listOfVars.size(); i++){
+    // treeVars[ listOfVars[i] ] = -999.99;
+    // jetTree->Branch( (listOfVars[i]).c_str() , &(treeVars[ listOfVars[i] ]), (listOfVars[i]+"/F").c_str() );
+  // }
+//
+  // for (unsigned i = 0; i < listOfVecVars.size(); i++){
+    // jetTree->Branch( (listOfVecVars[i]).c_str() , &(treeVecVars[ listOfVecVars[i] ]) );
+  // }
+//
+  // for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
+    // jetTree->Branch( (listOfIntVecVars[i]).c_str() , &(intVecVars[ listOfIntVecVars[i] ]) );
+  // }
 
   listOfBESTVars_ = {"jetAK8_pt", "jetAK8_mass", "jetAK8_SoftDropMass", "nSecondaryVertices", "bDisc", "bDisc1", "bDisc2", "jetAK8_Tau4", "jetAK8_Tau3", "jetAK8_Tau2", "jetAK8_Tau1", "jetAK8_Tau32", "jetAK8_Tau21", "FoxWolfH1_Higgs", "FoxWolfH2_Higgs", "FoxWolfH3_Higgs", "FoxWolfH4_Higgs", "FoxWolfH1_Top", "FoxWolfH2_Top", "FoxWolfH3_Top", "FoxWolfH4_Top", "FoxWolfH1_W", "FoxWolfH2_W", "FoxWolfH3_W", "FoxWolfH4_W", "FoxWolfH1_Z", "FoxWolfH2_Z", "FoxWolfH3_Z", "FoxWolfH4_Z", "isotropy_Higgs", "sphericity_Higgs", "aplanarity_Higgs", "thrust_Higgs", "sphericity_Top", "aplanarity_Top", "thrust_Top", "sphericity_W", "aplanarity_W", "thrust_W", "sphericity_Z", "aplanarity_Z", "thrust_Z", "nSubjets_Higgs", "nSubjets_Top", "nSubjets_W", "nSubjets_Z", "subjet12_mass_Higgs", "subjet23_mass_Higgs", "subjet13_mass_Higgs", "subjet1234_mass_Higgs", "subjet12_mass_Top", "subjet23_mass_Top", "subjet13_mass_Top", "subjet1234_mass_Top", "subjet12_mass_W", "subjet23_mass_W", "subjet13_mass_W", "subjet1234_mass_W", "subjet12_mass_Z", "subjet23_mass_Z", "subjet13_mass_Z", "subjet1234_mass_Z", "subjet12_CosTheta_Higgs", "subjet23_CosTheta_Higgs", "subjet13_CosTheta_Higgs", "subjet1234_CosTheta_Higgs", "subjet12_CosTheta_Top", "subjet23_CosTheta_Top", "subjet13_CosTheta_Top", "subjet1234_CosTheta_Top", "subjet12_CosTheta_W", "subjet23_CosTheta_W", "subjet13_CosTheta_W", "subjet1234_CosTheta_W", "subjet12_CosTheta_Z", "subjet23_CosTheta_Z", "subjet13_CosTheta_Z", "subjet1234_CosTheta_Z", "subjet12_DeltaCosTheta_Higgs", "subjet13_DeltaCosTheta_Higgs", "subjet23_DeltaCosTheta_Higgs", "subjet12_DeltaCosTheta_Top", "subjet13_DeltaCosTheta_Top", "subjet23_DeltaCosTheta_Top", "subjet12_DeltaCosTheta_W", "subjet13_DeltaCosTheta_W", "subjet23_DeltaCosTheta_W", "subjet12_DeltaCosTheta_Z", "subjet13_DeltaCosTheta_Z","subjet23_DeltaCosTheta_Z", "asymmetry_Higgs", "asymmetry_Top", "asymmetry_W", "asymmetry_Z"};
   //------------------------------------------------------------------------------
@@ -392,9 +396,13 @@ BESTAnalyzer::BESTAnalyzer(const edm::ParameterSet& iConfig):
     lheRunInfoProductToken_ = consumes<LHERunInfoProduct, edm::InRun> (lheRunInfoProductTag_);
     lheEventProductToken_ = consumes<LHEEventProduct> (lheEventProductTag_);
   }
+
+    produces<pat::JetCollection>();
+    // produces < CollectionName > (label),When the class constructor is called, the framework should be instructed that  class will add something to the file
+
 }
 
-BESTAnalyzer::~BESTAnalyzer()
+BESTProducer_v2::~BESTProducer_v2()
 {
 
   // do anything here that needs to be done at desctruction time
@@ -409,13 +417,14 @@ BESTAnalyzer::~BESTAnalyzer()
 
 // ------------ method called for each event  ------------
 
-void
-BESTAnalyzer::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
-{
+// void
+// BESTProducer_v2::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
+// {
 
 }
 void
-BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+// BESTProducer_v2::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+BESTProducer_v2::produce(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
 
@@ -447,32 +456,42 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   if(isMC_){
     float EventWeight = genEvtInfo->weight();
     // std::cout<<"EventWeight="<<EventWeight<<"\n";
-    GenWeightTotal->Fill(1, EventWeight);
+    // GenWeightTotal->Fill(1, EventWeight);
     treeVars["EvtWeight"] = EventWeight;
   }
   //Cutflow: First stage will just equal to number of events
-  Cutflow->Fill(0);
+  // Cutflow->Fill(0);
 
   //Begin pre-selections
   if (ak8Jets.size() > 3){
-      Cutflow->Fill(1);
+
+
+      // Cutflow->Fill(1);
       //Cutting on GeV > 400 for analysis, remember that the network is only trained on > 500!
       if (checkKinematicsOfJets(ak8Jets, 4) ){
           //in plugins/BESTtoolbox.cc
-          Cutflow->Fill(2);
+          // Cutflow->Fill(2);
           if (checkLengthOfSubJets(ak8Jets, 4) ){
-              Cutflow->Fill(3);
+              // Cutflow->Fill(3);
 
               treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
               // std::cout<<"HT = "<<treeVars["HT"]<<"\n";
 
 
               //Fills map with basic kinematic variables
+              //loop of jets begins
+              auto outputs = std::make_unique<pat::JetCollection>();
               for (int i = 0; i < 4; i++){
                   //???it seems it only uses leading 4 jet?
                   const pat::Jet& ijet = ak8Jets[i];
                   treeVecVars["jetAK8_phi"].push_back(ijet.phi());
                   treeVecVars["jetAK8_eta"].push_back(ijet.eta());
+
+
+                    //for output jet
+                    pat::Jet newJet( *ijet);
+
+
 
                   std::map<std::string, float> BESTmap;//so one map for ijet?
                   std::vector<float> BESTScores;
@@ -483,7 +502,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   std::vector<reco::Candidate * > daughtersOfJet;
                   getJetDaughters(daughtersOfJet, ijet); //unzips the subjets and other daughters into one vector
                   if (daughtersOfJet.size() < 3) goto DontFill;
-                  Cutflow->Fill(4, 0.25); // 1/4 weight per jet
+                  // Cutflow->Fill(4, 0.25); // 1/4 weight per jet
 
                   storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Higgs", 125.);
                   if (BESTmap["nSubjets_Higgs"] < 3) goto DontFill; //Should be a cleaner way to check this before the first RestFrameVariables call
@@ -492,7 +511,7 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "W", 80.4);
                   storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Z", 91.2);
 
-                  Cutflow->Fill(5, 0.25);
+                  // Cutflow->Fill(5, 0.25);
 
                   std::vector<float> BESTVars = orderBESTVars(BESTmap, listOfBESTVars_);
 
@@ -526,10 +545,25 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                   if(isMC_){
                       intVecVars["JetGenID"].push_back(FindPDGid(ijet, genPart, isSignal_));
                   }
+
+
+                //for output
+                cout<<"what's added to the newJet:"<<endl;
+                for (const auto &p : listOfVars){
+                    newJet.addUserFloat("BEST_"+p, treeVars[ p ]);
+                    cout<<p<<treeVars[p]<<" ";
+                }
+                cout<<endl;
+                //???how to add vector for each jet
+                outputs->push_back(newJet);
+
+
+
               }//4 ijet loop
-              jetTree->Fill();
+              // jetTree->Fill();
           }
       }
+    iEvent.put(std::move(outputs));
   }
   //-------------------------------------------------------------------------------
   // Clear and Reset all tree variables -------------------------------------------
@@ -550,20 +584,28 @@ BESTAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 // ------------ method called once each job just before starting event loop  ------------
+// void
+// BESTProducer_v2::beginJob()
+// {
+// }
+
 void
-BESTAnalyzer::beginJob()
+BESTProducer::beginStream(edm::StreamID)
 {
 }
-
 // ------------ method called once each job just after ending the event loop  ------------
-void
-BESTAnalyzer::endJob()
-{
-}
+// void
+// BESTProducer_v2::endJob()
+// {
+// }
 
 void
-BESTAnalyzer::endRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
+BESTProducer::endStream()
 {
+}
+// void
+// BESTProducer_v2::endRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
+// {
   /*
   edm::Handle<LHERunInfoProduct> lherun;
   typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
@@ -583,7 +625,7 @@ BESTAnalyzer::endRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-BESTAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+BESTProducer_v2::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -599,4 +641,4 @@ BESTAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
 
 
 //define this as a plug-in
-DEFINE_FWK_MODULE(BESTAnalyzer);
+DEFINE_FWK_MODULE(BESTProducer_v2);
