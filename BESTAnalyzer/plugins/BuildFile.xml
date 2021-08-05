@@ -19,4 +19,5 @@
 
 <library name="BESTProducer_v2" file="BESTProducer_v2.cc">
 <flags EDM_PLUGIN="1"/>
+<flags CXXFLAGS="-O0 -g3 -fno-inline"/>
 </library>

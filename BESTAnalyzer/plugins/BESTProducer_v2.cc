@@ -24,7 +24,7 @@
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
-#include "FWCore/Framework/interface/one/EDAnalyzer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
@@ -90,6 +90,7 @@
 //class BESTAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 // class BESTAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources, edm::one::WatchRuns > {
 class BESTProducer_v2 : public edm::stream::EDProducer<> {
+    //???what is the difference of edm::stream::EDProducer<> than edm:::EDProducer 
 public:
   //  explicit BESTAnalyzer(const edm::ParameterSet&, const CacheHandler*);
   explicit BESTProducer_v2(const edm::ParameterSet&);
@@ -421,10 +422,9 @@ BESTProducer_v2::~BESTProducer_v2()
 // BESTProducer_v2::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
 // {
 
-}
-void
+// }
 // BESTProducer_v2::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
-BESTProducer_v2::produce(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
 
@@ -463,6 +463,7 @@ BESTProducer_v2::produce(const edm::Event& iEvent, const edm::EventSetup& iSetup
   // Cutflow->Fill(0);
 
   //Begin pre-selections
+  auto outputs = std::make_unique<pat::JetCollection>();
   if (ak8Jets.size() > 3){
 
 
@@ -480,7 +481,6 @@ BESTProducer_v2::produce(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
               //Fills map with basic kinematic variables
               //loop of jets begins
-              auto outputs = std::make_unique<pat::JetCollection>();
               for (int i = 0; i < 4; i++){
                   //???it seems it only uses leading 4 jet?
                   const pat::Jet& ijet = ak8Jets[i];
@@ -488,8 +488,6 @@ BESTProducer_v2::produce(const edm::Event& iEvent, const edm::EventSetup& iSetup
                   treeVecVars["jetAK8_eta"].push_back(ijet.eta());
 
 
-                    //for output jet
-                    pat::Jet newJet( *ijet);
 
 
 
@@ -548,12 +546,15 @@ BESTProducer_v2::produce(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
 
                 //for output
-                cout<<"what's added to the newJet:"<<endl;
+                //for output jet
+                // pat::Jet newJet( *ijet);
+                pat::Jet newJet = ijet;
+                std::cout<<"what's added to the newJet:"<<"\n";
                 for (const auto &p : listOfVars){
                     newJet.addUserFloat("BEST_"+p, treeVars[ p ]);
-                    cout<<p<<treeVars[p]<<" ";
+                    std::cout<<p<<treeVars[p]<<" ";
                 }
-                cout<<endl;
+                std::cout<<"\n";
                 //???how to add vector for each jet
                 outputs->push_back(newJet);
 
@@ -590,7 +591,7 @@ BESTProducer_v2::produce(const edm::Event& iEvent, const edm::EventSetup& iSetup
 // }
 
 void
-BESTProducer::beginStream(edm::StreamID)
+BESTProducer_v2::beginStream(edm::StreamID)
 {
 }
 // ------------ method called once each job just after ending the event loop  ------------
@@ -600,7 +601,7 @@ BESTProducer::beginStream(edm::StreamID)
 // }
 
 void
-BESTProducer::endStream()
+BESTProducer_v2::endStream()
 {
 }
 // void
@@ -621,7 +622,7 @@ BESTProducer::endStream()
     }
   }
   */
-}
+// }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
