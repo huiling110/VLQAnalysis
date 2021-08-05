@@ -344,10 +344,10 @@ BESTProducer_v2::BESTProducer_v2(const edm::ParameterSet& iConfig):
   //Signal MC Info
   listOfVars.push_back("VLQDecayMode");
   listOfIntVecVars.push_back("JetGenID");
-  // for (unsigned i = 0; i < listOfVars.size(); i++){
-    // treeVars[ listOfVars[i] ] = -999.99;
+  for (unsigned i = 0; i < listOfVars.size(); i++){
+    treeVars[ listOfVars[i] ] = -999.99;
     // jetTree->Branch( (listOfVars[i]).c_str() , &(treeVars[ listOfVars[i] ]), (listOfVars[i]+"/F").c_str() );
-  // }
+  }
 //
   // for (unsigned i = 0; i < listOfVecVars.size(); i++){
     // jetTree->Branch( (listOfVecVars[i]).c_str() , &(treeVecVars[ listOfVecVars[i] ]) );
@@ -448,31 +448,31 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::vector<reco::VertexCompositePtrCandidate> secVertices = *secVertexCollection.product();
 
   Handle<GenEventInfoProduct> genEvtInfo;
-  if(isMC_){
+  // if(isMC_){
     // iEvent.getByToken(genEvtInfoToken_, genEvtInfo);
-  }
+  // }
 
   //Get Generator Weights, Systematic Variations
-  if(isMC_){
+  // if(isMC_){
     // float EventWeight = genEvtInfo->weight();
     // std::cout<<"EventWeight="<<EventWeight<<"\n";
     // GenWeightTotal->Fill(1, EventWeight);
     // treeVars["EvtWeight"] = EventWeight;
-  }
+  // }
   //Cutflow: First stage will just equal to number of events
   // Cutflow->Fill(0);
 
   //Begin pre-selections
   auto outputs = std::make_unique<pat::JetCollection>();
-  if (ak8Jets.size() > 3){
+  // if (ak8Jets.size() > 3){
 
 
       // Cutflow->Fill(1);
       //Cutting on GeV > 400 for analysis, remember that the network is only trained on > 500!
-      if (checkKinematicsOfJets(ak8Jets, 4) ){
+      // if (checkKinematicsOfJets(ak8Jets, 4) ){
           //in plugins/BESTtoolbox.cc
           // Cutflow->Fill(2);
-          if (checkLengthOfSubJets(ak8Jets, 4) ){
+          // if (checkLengthOfSubJets(ak8Jets, 4) ){
               // Cutflow->Fill(3);
 
               treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
@@ -550,10 +550,15 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                 // pat::Jet newJet( *ijet);
                 pat::Jet newJet = ijet;
                 std::cout<<"what's added to the newJet:"<<"\n";
-                for (const auto &p : listOfVars){
-                    newJet.addUserFloat("BEST_"+p, treeVars[ p ]);
-                    std::cout<<p<<treeVars[p]<<" ";
-                }
+                // for (const auto &p : listOfVars){
+                    // newJet.addUserFloat("BEST_"+p, treeVars[ p ]);
+                    // std::cout<<p<<treeVars[p]<<" ";
+                // }
+                // for (const auto &p : listOfVecVars){
+                    // newJet.addUserFloat("BEST_"+p, treeVecVars[ p ]);
+                    // std::cout<<p<<treeVecVars[p]<<" ";
+                // }
+                newJet.addUserFloat("BEST_NNOutputs0",BESTScores[0]);
                 std::cout<<"\n";
                 //???how to add vector for each jet
                 outputs->push_back(newJet);
@@ -562,11 +567,11 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
               }//4 ijet loop
               // jetTree->Fill();
-          }
-      }
+          // }
+      // }
     iEvent.put(std::move(outputs));
                 //???not  sure how output is saved into the event, which branch?
-  }
+  // }
   //-------------------------------------------------------------------------------
   // Clear and Reset all tree variables -------------------------------------------
   //-------------------------------------------------------------------------------
