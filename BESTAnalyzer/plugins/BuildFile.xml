@@ -13,11 +13,14 @@
 <use name="clhep"/>
 <use name="fastjet"/>
 
-<library file="BESTAnalyzer.cc" name="BESTAnalyzer">
-<flags EDM_PLUGIN="1"/>
-</library>
+<!-- <library file="BESTAnalyzer.cc" name="BESTAnalyzer"> -->
+<!-- <flags EDM_PLUGIN="1"/> -->
+<!-- </library> -->
 
-<library name="BESTProducer_v2" file="BESTProducer_v2.cc">
-<flags EDM_PLUGIN="1"/>
-<flags CXXFLAGS="-O0 -g3 -fno-inline"/>
+<!-- <library name="BESTProducer_v2" file="BESTProducer_v2.cc"> -->
+<!-- <flags EDM_PLUGIN="1"/> -->
+<!-- <flags CXXFLAGS="-O0 -g3 -fno-inline"/> -->
+    <!-- </library> -->
+<library file="*.cc" name="BESTPlugins">
+  <flags EDM_PLUGIN="1"/>
 </library>

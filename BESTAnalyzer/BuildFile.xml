@@ -11,5 +11,5 @@
 
 <flags CXXFLAGS="-O0 -g3 -fno-inline"/>
 <export>
-  <lib   name="1"/>
+  <lib name="1"/>
 </export>
