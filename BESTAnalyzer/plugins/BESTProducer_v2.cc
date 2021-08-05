@@ -136,7 +136,7 @@ private:
   edm::EDGetTokenT<std::vector<reco::Vertex> > verticesToken_;
   edm::EDGetTokenT<edm::TriggerResults> trigResultsToken_;
   edm::EDGetTokenT<bool> BadChCandFilterToken_;
-  edm::EDGetTokenT<GenEventInfoProduct> genEvtInfoToken_;
+  // edm::EDGetTokenT<GenEventInfoProduct> genEvtInfoToken_;
   edm::EDGetTokenT<LHEEventProduct> lheEventProductToken_;
   edm::EDGetTokenT<LHERunInfoProduct> lheRunInfoProductToken_;
 
@@ -332,7 +332,7 @@ BESTProducer_v2::BESTProducer_v2(const edm::ParameterSet& iConfig):
   listOfVars.push_back("PFJet450");
 
   //MC Info
-  listOfVars.push_back("EvtWeight");
+  // listOfVars.push_back("EvtWeight");
   listOfVars.push_back("PileupWeight");
   listOfVars.push_back("PileupWeightUp");
   listOfVars.push_back("PileupWeightDn");
@@ -387,13 +387,13 @@ BESTProducer_v2::BESTProducer_v2(const edm::ParameterSet& iConfig):
   //Generator Event Info For Weights
   //Only called for MC
   if (isMC_){
-    edm::InputTag genEvtInfoTag_;
-    genEvtInfoTag_ = edm::InputTag("generator", "", "SIM");
+    // edm::InputTag genEvtInfoTag_;
+    // genEvtInfoTag_ = edm::InputTag("generator", "", "SIM");
     edm::InputTag lheRunInfoProductTag_;
     lheRunInfoProductTag_ = edm::InputTag("externalLHEProducer", "", "SIM");
     edm::InputTag lheEventProductTag_;
     lheEventProductTag_ = edm::InputTag("externalLHEProducer", "", "SIM");
-    genEvtInfoToken_ = consumes<GenEventInfoProduct> (genEvtInfoTag_);
+    // genEvtInfoToken_ = consumes<GenEventInfoProduct> (genEvtInfoTag_);
     lheRunInfoProductToken_ = consumes<LHERunInfoProduct, edm::InRun> (lheRunInfoProductTag_);
     lheEventProductToken_ = consumes<LHEEventProduct> (lheEventProductTag_);
   }
@@ -449,15 +449,15 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   Handle<GenEventInfoProduct> genEvtInfo;
   if(isMC_){
-    iEvent.getByToken(genEvtInfoToken_, genEvtInfo);
+    // iEvent.getByToken(genEvtInfoToken_, genEvtInfo);
   }
 
   //Get Generator Weights, Systematic Variations
   if(isMC_){
-    float EventWeight = genEvtInfo->weight();
+    // float EventWeight = genEvtInfo->weight();
     // std::cout<<"EventWeight="<<EventWeight<<"\n";
     // GenWeightTotal->Fill(1, EventWeight);
-    treeVars["EvtWeight"] = EventWeight;
+    // treeVars["EvtWeight"] = EventWeight;
   }
   //Cutflow: First stage will just equal to number of events
   // Cutflow->Fill(0);
