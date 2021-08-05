@@ -23,9 +23,10 @@ process.source = cms.Source("PoolSource",
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
 
-process.run = cms.EDAnalyzer('BESTAnalyzer',
+#  process.run = cms.EDAnalyzer('BESTAnalyzer',
+process.run = cms.EDProducer('BESTProducer_v2',
 #                             graphDefinitions = cms.VPSet(
                              name = cms.string('BESTGraph'),
                              path = cms.FileInPath('VLQAnalysis/BESTAnalyzer/data/constantgraph.pb'),
@@ -37,16 +38,16 @@ process.run = cms.EDAnalyzer('BESTAnalyzer',
                              GT_ = cms.string(GT)
                              )
 
-process.TFileService = cms.Service("TFileService", fileName = cms.string("BESToutputs.root") )
+#  process.TFileService = cms.Service("TFileService", fileName = cms.string("BESToutputs.root") )
 
-#  process.out = cms.OutputModule("PoolOutputModule",
-                               #  fileName = cms.untracked.string("ana_out.root"),
+process.out = cms.OutputModule("PoolOutputModule",
+                               fileName = cms.untracked.string("BESTProducer_v2_out.root"),
                                #  SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
                                #  outputCommands = cms.untracked.vstring('drop *',
-								      #  'keep *_fixedGridRhoAll_*_*',
+                                                                      #  'keep *_fixedGridRhoAll_*_*',
                                                                       #  'keep *_run_*_*',
                                                                       #  )
-                               #  )
-#  process.outpath = cms.EndPath(process.out)
+                               )
+process.outpath = cms.EndPath(process.out)
 
 process.p = cms.Path(process.run)
