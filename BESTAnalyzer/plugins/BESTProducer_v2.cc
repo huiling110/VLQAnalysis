@@ -565,6 +565,7 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
           }
       }
     iEvent.put(std::move(outputs));
+                //???not  sure how output is saved into the event, which branch?
   }
   //-------------------------------------------------------------------------------
   // Clear and Reset all tree variables -------------------------------------------
