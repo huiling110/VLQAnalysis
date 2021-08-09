@@ -581,7 +581,6 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       // }
     // outputs->push_back(newJet);
                 //???not  sure how output is saved into the event, which branch?
-  }
   //-------------------------------------------------------------------------------
   // Clear and Reset all tree variables -------------------------------------------
   //-------------------------------------------------------------------------------
@@ -596,7 +595,8 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     intVecVars[ listOfIntVecVars[i] ].clear();
   }
 
-    iEvent.put(std::move(outputs));
+  }
+  iEvent.put(std::move(outputs));
 
 }
 
