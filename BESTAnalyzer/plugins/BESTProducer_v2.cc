@@ -575,7 +575,7 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             newJet.addUserFloat("BEST_NNOutputs0",BESTScores[0]);
 
             for ( const auto var : listOfBESTVars_  ){
-                newJet.addUserFloat( "BEST"+var, BESTmap[var] );
+                newJet.addUserFloat( "BEST_"+var, BESTmap[var] );
             }
 
 
