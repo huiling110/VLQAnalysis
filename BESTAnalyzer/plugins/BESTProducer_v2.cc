@@ -475,15 +475,21 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
           // if (checkLengthOfSubJets(ak8Jets, 4) ){
               // Cutflow->Fill(3);
 
-              treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
+              // treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
               // std::cout<<"HT = "<<treeVars["HT"]<<"\n";
 
 
               //Fills map with basic kinematic variables
               //loop of jets begins
-              for (int i = 0; i < 4; i++){
+              // for (int i = 0; i < 4; i++){
+  for (long unsigned int i = 0; i < ak8Jets.size(); i++){
                   //???it seems it only uses leading 4 jet?
                   const pat::Jet& ijet = ak8Jets[i];
+                // pat::Jet newJet = ijet;
+                pat::Jet newJet = ak8Jets[i];
+  if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, 4) && checkLengthOfSubJets(ak8Jets, 4) ){
+      // if (checkKinematicsOfJets(ak8Jets, 4) ){
+          // if (checkLengthOfSubJets(ak8Jets, 4) ){
                   treeVecVars["jetAK8_phi"].push_back(ijet.phi());
                   treeVecVars["jetAK8_eta"].push_back(ijet.eta());
 
@@ -548,7 +554,6 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                 //for output
                 //for output jet
                 // pat::Jet newJet( *ijet);
-                pat::Jet newJet = ijet;
                 std::cout<<"what's added to the newJet:"<<"\n";
                 // for (const auto &p : listOfVars){
                     // newJet.addUserFloat("BEST_"+p, treeVars[ p ]);
@@ -558,20 +563,25 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                     // newJet.addUserFloat("BEST_"+p, treeVecVars[ p ]);
                     // std::cout<<p<<treeVecVars[p]<<" ";
                 // }
+                std::cout<<BESTScores[0]<<"\n";
                 newJet.addUserFloat("BEST_NNOutputs0",BESTScores[0]);
+                std::cout<<newJet.userFloat( "BEST_NNOutputs0")<<"\n";
                 std::cout<<"\n";
                 //???how to add vector for each jet
                 outputs->push_back(newJet);
 
 
 
-              }//4 ijet loop
+            }//if 
               // jetTree->Fill();
           // }
+          // else {
+              // newJet.addUserFloat("BEST_NNOutputs0", -99);
+          // }
       // }
-    iEvent.put(std::move(outputs));
+    // outputs->push_back(newJet);
                 //???not  sure how output is saved into the event, which branch?
-  // }
+  }
   //-------------------------------------------------------------------------------
   // Clear and Reset all tree variables -------------------------------------------
   //-------------------------------------------------------------------------------
@@ -586,6 +596,7 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     intVecVars[ listOfIntVecVars[i] ].clear();
   }
 
+    iEvent.put(std::move(outputs));
 
 }
 
