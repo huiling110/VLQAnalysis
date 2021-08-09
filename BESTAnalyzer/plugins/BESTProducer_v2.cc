@@ -571,11 +571,14 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
                 // newJet.addUserFloat("BEST_"+p, treeVecVars[ p ]);
                 // std::cout<<p<<treeVecVars[p]<<" ";
             // }
-            std::cout<<BESTScores[0]<<"\n";
+            // std::cout<<BESTScores[0]<<"\n";
             newJet.addUserFloat("BEST_NNOutputs0",BESTScores[0]);
-            std::cout<<newJet.userFloat( "BEST_NNOutputs0")<<"\n";
-            std::cout<<"\n";
-            //???how to add vector for each jet
+
+            for ( const auto var : listOfBESTVars_  ){
+                newJet.addUserFloat( "BEST"+var, BESTmap[var] );
+            }
+
+
             outputs->push_back(newJet);
 
 
@@ -596,6 +599,7 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         // treeVars[ listOfVars[i] ] = -999.99;
       // }
 
+            std::cout<<"\n";
   }
   iEvent.put(std::move(outputs));
 
