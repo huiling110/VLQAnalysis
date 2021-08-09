@@ -507,6 +507,9 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
               initBESTVars(BESTmap, listOfBESTVars_);
         std::cout<<__LINE__<<"\n";
+              
+              const auto subjets = ijet.subjets("SoftDropPuppi");
+              if ( subjets.size()<2 ) continue;
               storeJetVariables(BESTmap, ijet, secVertices);
 
         std::cout<<__LINE__<<"\n";
