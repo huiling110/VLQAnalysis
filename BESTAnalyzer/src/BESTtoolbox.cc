@@ -121,10 +121,8 @@ void getJetDaughters(std::vector<reco::Candidate * > &daughtersOfJet, const pat:
 void storeJetVariables(std::map<std::string, float> &BESTVars, const pat::Jet &jet, const std::vector<reco::VertexCompositePtrCandidate> &secVertices)
 {//This method stores the lab frame variables used in BEST to a map
 
-        std::cout<<__LINE__<<"\n";
   BESTVars["jetAK8_pt"] = jet.pt();
   BESTVars["jetAK8_mass"] = jet.mass();
-        std::cout<<__LINE__<<"\n";
   BESTVars["jetAK8_SoftDropMass"] = jet.userFloat("ak8PFJetsPuppiSoftDropMass");
   BESTVars["jetAK8_Tau4"] = jet.userFloat("NjettinessAK8Puppi:tau4");
   BESTVars["jetAK8_Tau3"] = jet.userFloat("NjettinessAK8Puppi:tau3");
@@ -134,13 +132,10 @@ void storeJetVariables(std::map<std::string, float> &BESTVars, const pat::Jet &j
   BESTVars["jetAK8_Tau32"] = jet.userFloat("NjettinessAK8Puppi:tau3") / jet.userFloat("NjettinessAK8Puppi:tau2");
   BESTVars["jetAK8_SoftDropMass"] = jet.userFloat("ak8PFJetsPuppiSoftDropMass");
   BESTVars["bDisc"] = jet.bDiscriminator("pfDeepCSVJetTags:probb") + jet.bDiscriminator("pfDeepCSVJetTags:probbb");
-        std::cout<<__LINE__<<"\n";
   const auto subjets = jet.subjets("SoftDropPuppi");
   BESTVars["bDisc1"] = subjets[0]->bDiscriminator("pfDeepCSVJetTags:probb") + subjets[0]->bDiscriminator("pfDeepCSVJetTags:probbb");
-        std::cout<<__LINE__<<"\n";
   BESTVars["bDisc2"] = subjets[1]->bDiscriminator("pfDeepCSVJetTags:probb") + subjets[1]->bDiscriminator("pfDeepCSVJetTags:probbb");
 
-        std::cout<<__LINE__<<"\n";
   int numMatched = 0;
   for(std::vector<reco::VertexCompositePtrCandidate>::const_iterator vertBegin = secVertices.begin(),
 	vertEnd = secVertices.end(), ivert = vertBegin; ivert != vertEnd; ivert++){

@@ -489,13 +489,11 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               //loop of jets begins
               // for (int i = 0; i < 4; i++){
     for (long unsigned int i = 0; i < ak8Jets.size(); i++){
-        std::cout<<__LINE__<<"\n";
         //???it seems it only uses leading 4 jet?
         const pat::Jet& ijet = ak8Jets[i];
         // pat::Jet newJet = ijet;
         pat::Jet newJet = ak8Jets[i];
         if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, 4) && checkLengthOfSubJets(ak8Jets, 4) ){
-        std::cout<<__LINE__<<"\n";
       // if (checkKinematicsOfJets(ak8Jets, 4) ){
           // if (checkLengthOfSubJets(ak8Jets, 4) ){
              treeVecVars["jetAK8_phi"].push_back(ijet.phi());
@@ -506,26 +504,20 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               std::vector<float> BESTScores;
 
               initBESTVars(BESTmap, listOfBESTVars_);
-        std::cout<<__LINE__<<"\n";
               
               const auto subjets = ijet.subjets("SoftDropPuppi");
               if ( subjets.size()<2 ) continue;
               storeJetVariables(BESTmap, ijet, secVertices);
 
-        std::cout<<__LINE__<<"\n";
               std::vector<reco::Candidate * > daughtersOfJet;
-        std::cout<<__LINE__<<"\n";
               getJetDaughters(daughtersOfJet, ijet); //unzips the subjets and other daughters into one vector
-        std::cout<<__LINE__<<"\n";
               // if (daughtersOfJet.size() < 3) goto DontFill;
               if (daughtersOfJet.size() < 3)  continue;
-        std::cout<<__LINE__<<"\n";
               // Cutflow->Fill(4, 0.25); // 1/4 weight per jet
 
               storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Higgs", 125.);
               // if (BESTmap["nSubjets_Higgs"] < 3) goto DontFill; //Should be a cleaner way to check this before the first RestFrameVariables call
               if (BESTmap["nSubjets_Higgs"] < 3) continue; //Should be a cleaner way to check this before the first RestFrameVariables call
-        std::cout<<__LINE__<<"\n";
 
               storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Top", 172.5);
               storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "W", 80.4);
@@ -585,12 +577,10 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             std::cout<<"\n";
             //???how to add vector for each jet
             outputs->push_back(newJet);
-            std::cout<<__LINE__<<"\n";
 
 
         }//if 
               // jetTree->Fill();
-        std::cout<<__LINE__<<"\n";
           // }
           // else {
               // newJet.addUserFloat("BEST_NNOutputs0", -99);
@@ -606,12 +596,9 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         // treeVars[ listOfVars[i] ] = -999.99;
       // }
 
-    std::cout<<__LINE__<<"\n";
   }
-    std::cout<<__LINE__<<"\n";
   iEvent.put(std::move(outputs));
 
-    std::cout<<__LINE__<<"\n";
 }
 
 
