@@ -479,101 +479,115 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               // std::cout<<"HT = "<<treeVars["HT"]<<"\n";
 
 
+      for (unsigned i = 0; i < listOfVecVars.size(); i++){
+        treeVecVars[ listOfVecVars[i] ].clear();
+      }
+      for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
+        intVecVars[ listOfIntVecVars[i] ].clear();
+      }
               //Fills map with basic kinematic variables
               //loop of jets begins
               // for (int i = 0; i < 4; i++){
-  for (long unsigned int i = 0; i < ak8Jets.size(); i++){
-                  //???it seems it only uses leading 4 jet?
-                  const pat::Jet& ijet = ak8Jets[i];
-                // pat::Jet newJet = ijet;
-                pat::Jet newJet = ak8Jets[i];
-  if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, 4) && checkLengthOfSubJets(ak8Jets, 4) ){
+    for (long unsigned int i = 0; i < ak8Jets.size(); i++){
+        std::cout<<__LINE__<<"\n";
+        //???it seems it only uses leading 4 jet?
+        const pat::Jet& ijet = ak8Jets[i];
+        // pat::Jet newJet = ijet;
+        pat::Jet newJet = ak8Jets[i];
+        if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, 4) && checkLengthOfSubJets(ak8Jets, 4) ){
+        std::cout<<__LINE__<<"\n";
       // if (checkKinematicsOfJets(ak8Jets, 4) ){
           // if (checkLengthOfSubJets(ak8Jets, 4) ){
-                  treeVecVars["jetAK8_phi"].push_back(ijet.phi());
-                  treeVecVars["jetAK8_eta"].push_back(ijet.eta());
+             treeVecVars["jetAK8_phi"].push_back(ijet.phi());
+             treeVecVars["jetAK8_eta"].push_back(ijet.eta());
 
 
+              std::map<std::string, float> BESTmap;//so one map for ijet?
+              std::vector<float> BESTScores;
+
+              initBESTVars(BESTmap, listOfBESTVars_);
+        std::cout<<__LINE__<<"\n";
+              storeJetVariables(BESTmap, ijet, secVertices);
+
+        std::cout<<__LINE__<<"\n";
+              std::vector<reco::Candidate * > daughtersOfJet;
+        std::cout<<__LINE__<<"\n";
+              getJetDaughters(daughtersOfJet, ijet); //unzips the subjets and other daughters into one vector
+        std::cout<<__LINE__<<"\n";
+              // if (daughtersOfJet.size() < 3) goto DontFill;
+              if (daughtersOfJet.size() < 3)  continue;
+        std::cout<<__LINE__<<"\n";
+              // Cutflow->Fill(4, 0.25); // 1/4 weight per jet
+
+              storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Higgs", 125.);
+              // if (BESTmap["nSubjets_Higgs"] < 3) goto DontFill; //Should be a cleaner way to check this before the first RestFrameVariables call
+              if (BESTmap["nSubjets_Higgs"] < 3) continue; //Should be a cleaner way to check this before the first RestFrameVariables call
+        std::cout<<__LINE__<<"\n";
+
+              storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Top", 172.5);
+              storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "W", 80.4);
+              storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Z", 91.2);
+
+              // Cutflow->Fill(5, 0.25);
+
+              std::vector<float> BESTVars = orderBESTVars(BESTmap, listOfBESTVars_);
 
 
+              float HImage[31][31];
+              float TImage[31][31];
+              float WImage[31][31];
+              float ZImage[31][31];
+              prepareBoostedImage(ijet, daughtersOfJet, HImage, 125.);
+              prepareBoostedImage(ijet, daughtersOfJet, TImage, 172.5);
+              prepareBoostedImage(ijet, daughtersOfJet, WImage, 80.4);
+              prepareBoostedImage(ijet, daughtersOfJet, ZImage, 91.2);
 
-                  std::map<std::string, float> BESTmap;//so one map for ijet?
-                  std::vector<float> BESTScores;
-
-                  initBESTVars(BESTmap, listOfBESTVars_);
-                  storeJetVariables(BESTmap, ijet, secVertices);
-
-                  std::vector<reco::Candidate * > daughtersOfJet;
-                  getJetDaughters(daughtersOfJet, ijet); //unzips the subjets and other daughters into one vector
-                  if (daughtersOfJet.size() < 3) goto DontFill;
-                  // Cutflow->Fill(4, 0.25); // 1/4 weight per jet
-
-                  storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Higgs", 125.);
-                  if (BESTmap["nSubjets_Higgs"] < 3) goto DontFill; //Should be a cleaner way to check this before the first RestFrameVariables call
-
-                  storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Top", 172.5);
-                  storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "W", 80.4);
-                  storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Z", 91.2);
-
-                  // Cutflow->Fill(5, 0.25);
-
-                  std::vector<float> BESTVars = orderBESTVars(BESTmap, listOfBESTVars_);
-
-
-                  float HImage[31][31];
-                  float TImage[31][31];
-                  float WImage[31][31];
-                  float ZImage[31][31];
-                  prepareBoostedImage(ijet, daughtersOfJet, HImage, 125.);
-                  prepareBoostedImage(ijet, daughtersOfJet, TImage, 172.5);
-                  prepareBoostedImage(ijet, daughtersOfJet, WImage, 80.4);
-                  prepareBoostedImage(ijet, daughtersOfJet, ZImage, 91.2);
-
-                  for (auto it = BESTmap.cbegin(); it !=BESTmap.cend(); it++){
-                      treeVecVars[it->first].push_back(it->second);
-                  }
+              for (auto it = BESTmap.cbegin(); it !=BESTmap.cend(); it++){
+                  treeVecVars[it->first].push_back(it->second);
+              }
                   //Plug Jet values into network
-                  BESTScores = BEST_->getPrediction(HImage,TImage,WImage,ZImage,BESTVars);
-                  //Convert from a vector like (0,0,0,1,0) into an int with the decision
-                  //Currently a float for dumb reasons
-                  int decision = std::distance(BESTScores.begin(), std::max_element(BESTScores.begin(), BESTScores.end() ) );
+              BESTScores = BEST_->getPrediction(HImage,TImage,WImage,ZImage,BESTVars);
+              //Convert from a vector like (0,0,0,1,0) into an int with the decision
+              //Currently a float for dumb reasons
+              int decision = std::distance(BESTScores.begin(), std::max_element(BESTScores.begin(), BESTScores.end() ) );
 
-                  treeVecVars["NNOutputs0"].push_back(BESTScores[0]);
-                  treeVecVars["NNOutputs1"].push_back(BESTScores[1]);
-                  treeVecVars["NNOutputs2"].push_back(BESTScores[2]);
-                  treeVecVars["NNOutputs3"].push_back(BESTScores[3]);
-                  treeVecVars["NNOutputs4"].push_back(BESTScores[4]);
-                  treeVecVars["NNOutputs5"].push_back(BESTScores[5]);
-                  intVecVars["BESTDecision"].push_back(decision);
+              treeVecVars["NNOutputs0"].push_back(BESTScores[0]);
+              treeVecVars["NNOutputs1"].push_back(BESTScores[1]);
+              treeVecVars["NNOutputs2"].push_back(BESTScores[2]);
+              treeVecVars["NNOutputs3"].push_back(BESTScores[3]);
+              treeVecVars["NNOutputs4"].push_back(BESTScores[4]);
+              treeVecVars["NNOutputs5"].push_back(BESTScores[5]);
+              intVecVars["BESTDecision"].push_back(decision);
 
-                  if(isMC_){
-                      intVecVars["JetGenID"].push_back(FindPDGid(ijet, genPart, isSignal_));
-                  }
-
-
-                //for output
-                //for output jet
-                // pat::Jet newJet( *ijet);
-                std::cout<<"what's added to the newJet:"<<"\n";
-                // for (const auto &p : listOfVars){
-                    // newJet.addUserFloat("BEST_"+p, treeVars[ p ]);
-                    // std::cout<<p<<treeVars[p]<<" ";
-                // }
-                // for (const auto &p : listOfVecVars){
-                    // newJet.addUserFloat("BEST_"+p, treeVecVars[ p ]);
-                    // std::cout<<p<<treeVecVars[p]<<" ";
-                // }
-                std::cout<<BESTScores[0]<<"\n";
-                newJet.addUserFloat("BEST_NNOutputs0",BESTScores[0]);
-                std::cout<<newJet.userFloat( "BEST_NNOutputs0")<<"\n";
-                std::cout<<"\n";
-                //???how to add vector for each jet
-                outputs->push_back(newJet);
+              if(isMC_){
+                  intVecVars["JetGenID"].push_back(FindPDGid(ijet, genPart, isSignal_));
+              }
 
 
+            //for output
+            //for output jet
+            // pat::Jet newJet( *ijet);
+            std::cout<<"what's added to the newJet:"<<"\n";
+            // for (const auto &p : listOfVars){
+                // newJet.addUserFloat("BEST_"+p, treeVars[ p ]);
+                // std::cout<<p<<treeVars[p]<<" ";
+            // }
+            // for (const auto &p : listOfVecVars){
+                // newJet.addUserFloat("BEST_"+p, treeVecVars[ p ]);
+                // std::cout<<p<<treeVecVars[p]<<" ";
+            // }
+            std::cout<<BESTScores[0]<<"\n";
+            newJet.addUserFloat("BEST_NNOutputs0",BESTScores[0]);
+            std::cout<<newJet.userFloat( "BEST_NNOutputs0")<<"\n";
+            std::cout<<"\n";
+            //???how to add vector for each jet
+            outputs->push_back(newJet);
+            std::cout<<__LINE__<<"\n";
 
-            }//if 
+
+        }//if 
               // jetTree->Fill();
+        std::cout<<__LINE__<<"\n";
           // }
           // else {
               // newJet.addUserFloat("BEST_NNOutputs0", -99);
@@ -584,20 +598,17 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   //-------------------------------------------------------------------------------
   // Clear and Reset all tree variables -------------------------------------------
   //-------------------------------------------------------------------------------
- DontFill: //Label to go-to when jets in loop fail a cut
-  for (unsigned i = 0; i < listOfVars.size(); i++){
-    treeVars[ listOfVars[i] ] = -999.99;
-  }
-  for (unsigned i = 0; i < listOfVecVars.size(); i++){
-    treeVecVars[ listOfVecVars[i] ].clear();
-  }
-  for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
-    intVecVars[ listOfIntVecVars[i] ].clear();
-  }
+     // DontFill: //Label to go-to when jets in loop fail a cut
+      // for (unsigned i = 0; i < listOfVars.size(); i++){
+        // treeVars[ listOfVars[i] ] = -999.99;
+      // }
 
+    std::cout<<__LINE__<<"\n";
   }
+    std::cout<<__LINE__<<"\n";
   iEvent.put(std::move(outputs));
 
+    std::cout<<__LINE__<<"\n";
 }
 
 
