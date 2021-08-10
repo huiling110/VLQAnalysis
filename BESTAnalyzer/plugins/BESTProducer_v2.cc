@@ -348,14 +348,6 @@ BESTProducer_v2::BESTProducer_v2(const edm::ParameterSet& iConfig):
     treeVars[ listOfVars[i] ] = -999.99;
     // jetTree->Branch( (listOfVars[i]).c_str() , &(treeVars[ listOfVars[i] ]), (listOfVars[i]+"/F").c_str() );
   }
-//
-  // for (unsigned i = 0; i < listOfVecVars.size(); i++){
-    // jetTree->Branch( (listOfVecVars[i]).c_str() , &(treeVecVars[ listOfVecVars[i] ]) );
-  // }
-//
-  // for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
-    // jetTree->Branch( (listOfIntVecVars[i]).c_str() , &(intVecVars[ listOfIntVecVars[i] ]) );
-  // }
 
   listOfBESTVars_ = {"jetAK8_pt", "jetAK8_mass", "jetAK8_SoftDropMass", "nSecondaryVertices", "bDisc", "bDisc1", "bDisc2", "jetAK8_Tau4", "jetAK8_Tau3", "jetAK8_Tau2", "jetAK8_Tau1", "jetAK8_Tau32", "jetAK8_Tau21", "FoxWolfH1_Higgs", "FoxWolfH2_Higgs", "FoxWolfH3_Higgs", "FoxWolfH4_Higgs", "FoxWolfH1_Top", "FoxWolfH2_Top", "FoxWolfH3_Top", "FoxWolfH4_Top", "FoxWolfH1_W", "FoxWolfH2_W", "FoxWolfH3_W", "FoxWolfH4_W", "FoxWolfH1_Z", "FoxWolfH2_Z", "FoxWolfH3_Z", "FoxWolfH4_Z", "isotropy_Higgs", "sphericity_Higgs", "aplanarity_Higgs", "thrust_Higgs", "sphericity_Top", "aplanarity_Top", "thrust_Top", "sphericity_W", "aplanarity_W", "thrust_W", "sphericity_Z", "aplanarity_Z", "thrust_Z", "nSubjets_Higgs", "nSubjets_Top", "nSubjets_W", "nSubjets_Z", "subjet12_mass_Higgs", "subjet23_mass_Higgs", "subjet13_mass_Higgs", "subjet1234_mass_Higgs", "subjet12_mass_Top", "subjet23_mass_Top", "subjet13_mass_Top", "subjet1234_mass_Top", "subjet12_mass_W", "subjet23_mass_W", "subjet13_mass_W", "subjet1234_mass_W", "subjet12_mass_Z", "subjet23_mass_Z", "subjet13_mass_Z", "subjet1234_mass_Z", "subjet12_CosTheta_Higgs", "subjet23_CosTheta_Higgs", "subjet13_CosTheta_Higgs", "subjet1234_CosTheta_Higgs", "subjet12_CosTheta_Top", "subjet23_CosTheta_Top", "subjet13_CosTheta_Top", "subjet1234_CosTheta_Top", "subjet12_CosTheta_W", "subjet23_CosTheta_W", "subjet13_CosTheta_W", "subjet1234_CosTheta_W", "subjet12_CosTheta_Z", "subjet23_CosTheta_Z", "subjet13_CosTheta_Z", "subjet1234_CosTheta_Z", "subjet12_DeltaCosTheta_Higgs", "subjet13_DeltaCosTheta_Higgs", "subjet23_DeltaCosTheta_Higgs", "subjet12_DeltaCosTheta_Top", "subjet13_DeltaCosTheta_Top", "subjet23_DeltaCosTheta_Top", "subjet12_DeltaCosTheta_W", "subjet13_DeltaCosTheta_W", "subjet23_DeltaCosTheta_W", "subjet12_DeltaCosTheta_Z", "subjet13_DeltaCosTheta_Z","subjet23_DeltaCosTheta_Z", "asymmetry_Higgs", "asymmetry_Top", "asymmetry_W", "asymmetry_Z"};
   //------------------------------------------------------------------------------
@@ -418,12 +410,6 @@ BESTProducer_v2::~BESTProducer_v2()
 
 // ------------ method called for each event  ------------
 
-// void
-// BESTProducer_v2::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
-// {
-
-// }
-// BESTProducer_v2::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
@@ -448,54 +434,23 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::vector<reco::VertexCompositePtrCandidate> secVertices = *secVertexCollection.product();
 
   Handle<GenEventInfoProduct> genEvtInfo;
-  // if(isMC_){
-    // iEvent.getByToken(genEvtInfoToken_, genEvtInfo);
-  // }
-
-  //Get Generator Weights, Systematic Variations
-  // if(isMC_){
-    // float EventWeight = genEvtInfo->weight();
-    // std::cout<<"EventWeight="<<EventWeight<<"\n";
-    // GenWeightTotal->Fill(1, EventWeight);
-    // treeVars["EvtWeight"] = EventWeight;
-  // }
-  //Cutflow: First stage will just equal to number of events
-  // Cutflow->Fill(0);
 
   //Begin pre-selections
   auto outputs = std::make_unique<pat::JetCollection>();
-  // if (ak8Jets.size() > 3){
 
-
-      // Cutflow->Fill(1);
-      //Cutting on GeV > 400 for analysis, remember that the network is only trained on > 500!
-      // if (checkKinematicsOfJets(ak8Jets, 4) ){
-          //in plugins/BESTtoolbox.cc
-          // Cutflow->Fill(2);
-          // if (checkLengthOfSubJets(ak8Jets, 4) ){
-              // Cutflow->Fill(3);
-
-              // treeVars["HT"] = ak8Jets[0].pt() + ak8Jets[1].pt() + ak8Jets[2].pt() + ak8Jets[3].pt();
-              // std::cout<<"HT = "<<treeVars["HT"]<<"\n";
-
-
-      for (unsigned i = 0; i < listOfVecVars.size(); i++){
-        treeVecVars[ listOfVecVars[i] ].clear();
-      }
-      for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
-        intVecVars[ listOfIntVecVars[i] ].clear();
-      }
-              //Fills map with basic kinematic variables
-              //loop of jets begins
-              // for (int i = 0; i < 4; i++){
+  for (unsigned i = 0; i < listOfVecVars.size(); i++){
+    treeVecVars[ listOfVecVars[i] ].clear();
+  }
+  for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
+    intVecVars[ listOfIntVecVars[i] ].clear();
+  }
+  //Fills map with basic kinematic variables
+  //loop of jets begins
     for (long unsigned int i = 0; i < ak8Jets.size(); i++){
-        //???it seems it only uses leading 4 jet?
         const pat::Jet& ijet = ak8Jets[i];
         // pat::Jet newJet = ijet;
         pat::Jet newJet = ak8Jets[i];
         if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, 4) && checkLengthOfSubJets(ak8Jets, 4) ){
-      // if (checkKinematicsOfJets(ak8Jets, 4) ){
-          // if (checkLengthOfSubJets(ak8Jets, 4) ){
              treeVecVars["jetAK8_phi"].push_back(ijet.phi());
              treeVecVars["jetAK8_eta"].push_back(ijet.eta());
 
@@ -563,16 +518,13 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             //for output jet
             // pat::Jet newJet( *ijet);
             std::cout<<"what's added to the newJet:"<<"\n";
-            // for (const auto &p : listOfVars){
-                // newJet.addUserFloat("BEST_"+p, treeVars[ p ]);
-                // std::cout<<p<<treeVars[p]<<" ";
-            // }
-            // for (const auto &p : listOfVecVars){
-                // newJet.addUserFloat("BEST_"+p, treeVecVars[ p ]);
-                // std::cout<<p<<treeVecVars[p]<<" ";
-            // }
             // std::cout<<BESTScores[0]<<"\n";
             newJet.addUserFloat("BEST_NNOutputs0",BESTScores[0]);
+            newJet.addUserFloat("BEST_NNOutputs1",BESTScores[1]);
+            newJet.addUserFloat("BEST_NNOutputs2",BESTScores[2]);
+            newJet.addUserFloat("BEST_NNOutputs3",BESTScores[3]);
+            newJet.addUserFloat("BEST_NNOutputs4",BESTScores[4]);
+            newJet.addUserFloat("BEST_NNOutputs5",BESTScores[5]);
 
             for ( const auto var : listOfBESTVars_  ){
                 newJet.addUserFloat( "BEST_"+var, BESTmap[var] );
@@ -583,23 +535,8 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
         }//if 
-              // jetTree->Fill();
-          // }
-          // else {
-              // newJet.addUserFloat("BEST_NNOutputs0", -99);
-          // }
-      // }
-    // outputs->push_back(newJet);
-                //???not  sure how output is saved into the event, which branch?
-  //-------------------------------------------------------------------------------
-  // Clear and Reset all tree variables -------------------------------------------
-  //-------------------------------------------------------------------------------
-     // DontFill: //Label to go-to when jets in loop fail a cut
-      // for (unsigned i = 0; i < listOfVars.size(); i++){
-        // treeVars[ listOfVars[i] ] = -999.99;
-      // }
 
-            std::cout<<"\n";
+            // std::cout<<"\n";
   }
   iEvent.put(std::move(outputs));
 
@@ -607,10 +544,6 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
 // ------------ method called once each job just before starting event loop  ------------
-// void
-// BESTProducer_v2::beginJob()
-// {
-// }
 
 void
 BESTProducer_v2::beginStream(edm::StreamID)
