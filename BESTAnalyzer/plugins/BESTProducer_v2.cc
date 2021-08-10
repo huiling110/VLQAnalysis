@@ -125,7 +125,7 @@ private:
   // TH1F *Cutflow;
   std::map<std::string, float> treeVars;
   std::vector<std::string> listOfVars;
-  std::map<std::string, std::vector<float> > treeVecVars;
+  // std::map<std::string, std::vector<float> > treeVecVars;
   std::map<std::string, std::vector<int> > intVecVars;
   std::vector<std::string> listOfVecVars;
   std::vector<std::string> listOfIntVecVars;
@@ -438,22 +438,24 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   //Begin pre-selections
   auto outputs = std::make_unique<pat::JetCollection>();
 
-  for (unsigned i = 0; i < listOfVecVars.size(); i++){
-    treeVecVars[ listOfVecVars[i] ].clear();
-  }
+  // for (unsigned i = 0; i < listOfVecVars.size(); i++){
+    // treeVecVars[ listOfVecVars[i] ].clear();
+  // }
   for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
     intVecVars[ listOfIntVecVars[i] ].clear();
   }
   //Fills map with basic kinematic variables
   //loop of jets begins
     for (long unsigned int i = 0; i < ak8Jets.size(); i++){
+        std::cout<<"in jet loop"<<"\n";
         const pat::Jet& ijet = ak8Jets[i];
         // pat::Jet newJet = ijet;
         pat::Jet newJet = ak8Jets[i];
         // if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, 4) && checkLengthOfSubJets(ak8Jets, 4) ){
         if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, ak8Jets.size()) && checkLengthOfSubJets(ak8Jets, ak8Jets.size()) ){
-             treeVecVars["jetAK8_phi"].push_back(ijet.phi());
-             treeVecVars["jetAK8_eta"].push_back(ijet.eta());
+            std::cout<<"passing first if"<<"\n";
+             // treeVecVars["jetAK8_phi"].push_back(ijet.phi());
+             // treeVecVars["jetAK8_eta"].push_back(ijet.eta());
 
 
               std::map<std::string, float> BESTmap;//so one map for ijet?
@@ -479,7 +481,6 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "W", 80.4);
               storeRestFrameVariables(BESTmap, daughtersOfJet, ijet, "Z", 91.2);
 
-              // Cutflow->Fill(5, 0.25);
 
               std::vector<float> BESTVars = orderBESTVars(BESTmap, listOfBESTVars_);
 
@@ -493,21 +494,21 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               prepareBoostedImage(ijet, daughtersOfJet, WImage, 80.4);
               prepareBoostedImage(ijet, daughtersOfJet, ZImage, 91.2);
 
-              for (auto it = BESTmap.cbegin(); it !=BESTmap.cend(); it++){
-                  treeVecVars[it->first].push_back(it->second);
-              }
+              // for (auto it = BESTmap.cbegin(); it !=BESTmap.cend(); it++){
+                  // treeVecVars[it->first].push_back(it->second);
+              // }
                   //Plug Jet values into network
               BESTScores = BEST_->getPrediction(HImage,TImage,WImage,ZImage,BESTVars);
               //Convert from a vector like (0,0,0,1,0) into an int with the decision
               //Currently a float for dumb reasons
               int decision = std::distance(BESTScores.begin(), std::max_element(BESTScores.begin(), BESTScores.end() ) );
 
-              treeVecVars["NNOutputs0"].push_back(BESTScores[0]);
-              treeVecVars["NNOutputs1"].push_back(BESTScores[1]);
-              treeVecVars["NNOutputs2"].push_back(BESTScores[2]);
-              treeVecVars["NNOutputs3"].push_back(BESTScores[3]);
-              treeVecVars["NNOutputs4"].push_back(BESTScores[4]);
-              treeVecVars["NNOutputs5"].push_back(BESTScores[5]);
+              // treeVecVars["NNOutputs0"].push_back(BESTScores[0]);
+              // treeVecVars["NNOutputs1"].push_back(BESTScores[1]);
+              // treeVecVars["NNOutputs2"].push_back(BESTScores[2]);
+              // treeVecVars["NNOutputs3"].push_back(BESTScores[3]);
+              // treeVecVars["NNOutputs4"].push_back(BESTScores[4]);
+              // treeVecVars["NNOutputs5"].push_back(BESTScores[5]);
               intVecVars["BESTDecision"].push_back(decision);
 
               if(isMC_){
