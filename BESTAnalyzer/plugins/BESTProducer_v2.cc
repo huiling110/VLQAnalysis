@@ -440,14 +440,15 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     intVecVars[ listOfIntVecVars[i] ].clear();
   }
   //Fills map with basic kinematic variables
-  //loop of jets begins
+  //loop of jets begins)
     for (long unsigned int i = 0; i < ak8Jets.size(); i++){
         std::cout<<"in jet loop"<<"\n";
         const pat::Jet& ijet = ak8Jets[i];
         // pat::Jet newJet = ijet;
         pat::Jet newJet = ak8Jets[i];
         // if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, 4) && checkLengthOfSubJets(ak8Jets, 4) ){
-        if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, ak8Jets.size()) && checkLengthOfSubJets(ak8Jets, ak8Jets.size()) ){
+        // if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, ak8Jets.size()) && checkLengthOfSubJets(ak8Jets, ak8Jets.size()) ){
+        if (ak8Jets.size() > 3 && checkKinematicsOfJet( ijet) && checkLengthOfSubJet( ijet) ){
             std::cout<<"passing first if"<<"\n";
              // treeVecVars["jetAK8_phi"].push_back(ijet.phi());
              // treeVecVars["jetAK8_eta"].push_back(ijet.eta());

@@ -476,6 +476,11 @@ bool checkKinematicsOfJets(const std::vector<pat::Jet> &jets, int length){
   }
   return check;
 }
+bool checkKinematicsOfJet(const pat::Jet &jet){
+    bool check = false;
+    if ( jet.pt()>400 && std::fabs(jet.eta()<2.4) ) check = true;
+    return check;
+}
 
 bool checkLengthOfSubJets(const std::vector<pat::Jet> &jets, int length){
   bool check = true;
@@ -483,6 +488,11 @@ bool checkLengthOfSubJets(const std::vector<pat::Jet> &jets, int length){
     check = check && (jets.at(i).subjets("SoftDropPuppi").size() >= 2) && (jets.at(i).numberOfDaughters() > 2);
   }
   return check;
+}
+bool checkLengthOfSubJet(const pat::Jet &jet ){
+    bool check = false;
+    if ( jet.subjets("SoftDropPuppi").size()>=2 && jet.numberOfDaughters()>2 ) check = true;
+    return check;
 }
 
 int FindPDGid(const pat::Jet &jet, const std::vector<reco::GenParticle> &GenParticles, bool isSignal_){
