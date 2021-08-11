@@ -433,16 +433,13 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   //Begin pre-selections
   auto outputs = std::make_unique<pat::JetCollection>();
 
-  // for (unsigned i = 0; i < listOfVecVars.size(); i++){
-    // treeVecVars[ listOfVecVars[i] ].clear();
-  // }
   for (unsigned i = 0; i < listOfIntVecVars.size(); i++){
     intVecVars[ listOfIntVecVars[i] ].clear();
   }
   //Fills map with basic kinematic variables
   //loop of jets begins)
     for (long unsigned int i = 0; i < ak8Jets.size(); i++){
-        std::cout<<"in jet loop"<<"\n";
+        // std::cout<<"in jet loop"<<"\n";
         const pat::Jet& ijet = ak8Jets[i];
         // pat::Jet newJet = ijet;
         pat::Jet newJet = ak8Jets[i];
@@ -496,6 +493,7 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
               //Convert from a vector like (0,0,0,1,0) into an int with the decision
               //Currently a float for dumb reasons
               int decision = std::distance(BESTScores.begin(), std::max_element(BESTScores.begin(), BESTScores.end() ) );
+              //std::distance:Calculates the number of elements between first and last.
 
               // treeVecVars["NNOutputs0"].push_back(BESTScores[0]);
               // treeVecVars["NNOutputs1"].push_back(BESTScores[1]);
@@ -521,6 +519,8 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
             newJet.addUserFloat("BEST_NNOutputs3",BESTScores[3]);
             newJet.addUserFloat("BEST_NNOutputs4",BESTScores[4]);
             newJet.addUserFloat("BEST_NNOutputs5",BESTScores[5]);
+            // newJet.addUserFloat("BEST_decison", decision );
+            newJet.addUserInt("BEST_decison", decision );
 
             for ( const auto var : listOfBESTVars_  ){
                 newJet.addUserFloat( "BEST_"+var, BESTmap[var] );
