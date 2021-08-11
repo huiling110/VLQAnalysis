@@ -446,12 +446,10 @@ void BESTProducer_v2::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         const pat::Jet& ijet = ak8Jets[i];
         // pat::Jet newJet = ijet;
         pat::Jet newJet = ak8Jets[i];
-        // if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, 4) && checkLengthOfSubJets(ak8Jets, 4) ){
         // if (ak8Jets.size() > 3 && checkKinematicsOfJets(ak8Jets, ak8Jets.size()) && checkLengthOfSubJets(ak8Jets, ak8Jets.size()) ){
-        if (ak8Jets.size() > 3 && checkKinematicsOfJet( ijet) && checkLengthOfSubJet( ijet) ){
+        // if (ak8Jets.size() > 3 && checkKinematicsOfJet( ijet) && checkLengthOfSubJet( ijet) ){
+        if (checkKinematicsOfJet( ijet) && checkLengthOfSubJet( ijet) ){
             std::cout<<"passing first if"<<"\n";
-             // treeVecVars["jetAK8_phi"].push_back(ijet.phi());
-             // treeVecVars["jetAK8_eta"].push_back(ijet.eta());
 
 
               std::map<std::string, float> BESTmap;//so one map for ijet?
